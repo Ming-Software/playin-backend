@@ -64,7 +64,7 @@ export const refreshController = async (req: FastifyRequest, res: FastifyReply) 
     const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
     const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10m" });
 
-    return res.code(200).send({ Token: accessToken });
+    return res.code(200).send({ AccessToken: accessToken });
   } catch (error) {
     return res.code(500).send(error);
   }
