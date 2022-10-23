@@ -45,6 +45,18 @@ ERROS:
   4. Devolve um erro se alguma coisa correr mal
 ```
 
+### Logout (logout)
+Quando queremos dar logout, porque isto é jwt temos de eliminar o AccessToken no lado do client, no entanto como o RefreshToken está nas cookies que foram criadas do lado servidor, é este que tem de as apagar.
+```
+RESPONSE:
+  StatusCode: 200
+  Status: String
+  
+ERROS:
+  1. Devolve um erro de **Unauthorized** quando o AccessToken não é valido
+  2. Devolve um erro se alguma coisa correr mal
+```
+
 ### Refresh (refresh)
 Quando o AccessToken expira, esta rota permite receber um novo token sem dar login.
 ```
@@ -60,17 +72,7 @@ ERROS:
   2. Devolve um erro se alguma coisa correr mal
   
 ```
-### Logout (logout)
-Quando queremos dar logout, porque isto é jwt temos de eliminar o AccessToken no lado do client, no entanto como o RefreshToken está nas cookies que foram criadas do lado servidor, é este que tem de as apagar.
-```
-RESPONSE:
-  StatusCode: 200
-  Status: String
-  
-ERROS:
-  1. Devolve um erro de **Unauthorized** quando o AccessToken não é valido
-  2. Devolve um erro se alguma coisa correr mal
-```
+
 
 
 
