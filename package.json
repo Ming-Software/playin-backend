@@ -1,0 +1,32 @@
+{
+  "name": "playin-backend",
+  "version": "1.0.0",
+  "description": "Fastify Prisma Typescript backend",
+  "main": "main.ts",
+  "repository": "git@github.com:Ming-Software/playin-backend.git",
+  "author": "Ming Software",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "tsnd --respawn --transpile-only --exit-child src/main.ts"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/node": "^18.11.3",
+    "prisma": "^4.5.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@fastify/auth": "^4.1.0",
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/cors": "^8.1.0",
+    "@fastify/jwt": "^6.3.2",
+    "@prisma/client": "^4.5.0",
+    "@sinclair/typebox": "^0.24.48",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.9.2"
+  }
+}

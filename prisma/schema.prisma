@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  CreatedAt   DateTime @default(now())
+  ID          String   @id @default(uuid())
+  Email       String   @unique
+  Password    String
+  Description String   @default("")
+
+  Permissions        String @default("USER")
+  ActivityPreference String @default("NONE")
+  SocialPreference   String @default("NONE")
+
+  Event            Event[]
+  EventParticipant EventParticipant[]
+  EventGuest       EventGuest[]
+  EventPermission  EventPermission[]
+  Message          Message[]
+}
+
+model Event {
+  CreatedAt   DateTime @default(now())
+  ID          String   @id @default(uuid())
+  Name        String
+  Description String
+  Date        DateTime
+  Locale      String
+  Duration    String
+
+  Public              Boolean @default(true)
+  MaxParticipants     Int
+  CurrentParticipants Int
+  ActivityType        String
+  SocialType          String
+
+  User   User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID String
+
+  EventParticipant EventParticipant[]
+  EventGuest       EventGuest[]
+  EventPermission  EventPermission[]
+  Message          Message[]
+}
+
+model EventParticipant {
+  ID      String @id @default(uuid())
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+}
+
+model EventGuest {
+  ID      String @id @default(uuid())
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+}
+
+model EventPermission {
+  ID      String @id @default(uuid())
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+}
+
+model Message {
+  CreatedAt DateTime @default(now())
+  ID        String   @id @default(uuid())
+  Text      String
+
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+}
