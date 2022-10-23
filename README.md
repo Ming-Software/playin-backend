@@ -39,7 +39,7 @@ COOKIES:
   RefreshToken: String
   
 ERROS:
-  1. Devolve um erro de **Unauthorized** quando o AccessToken não é valido.
+  1. Devolve um erro de Unauthorized quando o AccessToken não é valido.
   2. Devolve um erro quando o email não existe na BD
   3. Devolve um erro quando a pass não está correta
   4. Devolve um erro se alguma coisa correr mal
