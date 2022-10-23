@@ -12,7 +12,7 @@ const buildApp = () => {
   const app = Fastify();
 
   // Plugin
-  app.register(FastifyCORS, { origin: false });
+  app.register(FastifyCORS, {});
   app.register(FastifyAuth, { defaultRelation: "or" });
   app.register(FastifyCookie, { secret: process.env.REFRESH_SECRET });
   app.register(FastifyJWT, { secret: String(process.env.REFRESH_SECRET), cookie: { cookieName: "refreshToken", signed: true } });
