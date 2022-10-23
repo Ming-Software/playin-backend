@@ -40,9 +40,9 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
 
     // We create a cookie with the refreshToken (secure MUST be true for production)
-    res.setCookie("refreshToken", refreshToken, { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
+    res.setCookie("RefreshToken", refreshToken, { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
 
-    return res.code(200).send({ Token: accessToken });
+    return res.code(200).send({ AccessToken: accessToken });
   } catch (error) {
     return res.code(500).send(error);
   }

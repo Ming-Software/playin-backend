@@ -17,5 +17,5 @@ export const loginBody = Type.Object({
 });
 
 export const loginResponse = Type.Object({
-  Token: Type.String(),
+  AccessToken: Type.String(),
 });
