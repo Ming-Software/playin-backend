@@ -5,5 +5,3 @@ enum Activity {
     PADEL    = 'Padel', 
     TENIS    = 'Tenis'
 };
-
-console.log(Activity.FUTEBOL);
