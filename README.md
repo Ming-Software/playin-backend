@@ -39,9 +39,9 @@ COOKIES:
   RefreshToken: String
   
 ERROS:
-  2. Devolve um erro quando o email não existe na BD
-  3. Devolve um erro quando a pass não está correta
-  4. Devolve um erro se alguma coisa correr mal
+  1. Devolve um erro quando o email não existe na BD
+  2. Devolve um erro quando a pass não está correta
+  3. Devolve um erro se alguma coisa correr mal
 ```
 
 ### Logout (logout)
