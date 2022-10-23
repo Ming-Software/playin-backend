@@ -1,7 +1,7 @@
 # Descrição do Backend 
 Vamos descrever aqui os endpoints feitos no backend. Vamos falar dos valores que devem ser enviados, dos valores que devem ser recebidos e ainda descrever os erros que podem aparecer pelo caminho.
 
-O domínio para os pedidos à backend é **http://localhost:6532/**
+O domínio para os pedidos à backend é http://localhost:6532/
 
 ## Auth (api/auth/)
 Aqui estão os endpoints que remetem para ações de autenticação. A autenticação funciona à base de JWT sendo que temos dois. Um é o AccessToken que expira em 10 minutos e permite ao utilizador fazer pedidos ao backend, e um RefreshToken que expira numa semana e permite ao utilizador adquirir mais AccessTokens sem ter de fazer login. Os tokens têm dentro deles o ID do user. Com este mecanismo, agora todos os pedidos estão sujeitos a validação de um AccessToken.
