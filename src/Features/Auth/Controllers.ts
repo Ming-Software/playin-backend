@@ -51,7 +51,7 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
 export const logoutController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     // We just need to clear the refreshToken from the cookies
-    res.clearCookie("refreshToken", { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
+    res.clearCookie("RefreshToken", { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
     return res.code(200).send({ Status: "Logout Successfully" });
   } catch (error) {
     return res.code(500).send(error);
