@@ -10,7 +10,7 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
     // We check to see if the email is unique
     const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });
     if (user) {
-      return res.code(500).send(new Error("Email already exists"));
+      return res.status(500).send(new Error("Email already exists"));
     }
     // We now hash the password and store the user
     const hash = await hashPassword(req.body.Password);
@@ -23,9 +23,9 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
       },
     });
 
-    return res.code(200).send({ Status: "Register was successful" });
+    return res.status(200).send({ Status: "Register was successful" });
   } catch (error) {
-    return res.code(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -34,12 +34,12 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     // We check to see if the email exists
     const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });
     if (!user) {
-      return res.code(500).send(new Error("Email does not exists"));
+      return res.status(500).send(new Error("Email does not exists"));
     }
     // We now verify the password
     const isValid = await checkPassword(user.Password, req.body.Password);
     if (!isValid) {
-      return res.code(500).send(new Error("Password is not correct"));
+      return res.status(500).send(new Error("Password is not correct"));
     }
 
     // We create the accessToken (expires in 10 minutes) and the refreshToken (expires in 1 week)
@@ -50,9 +50,9 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     // We create a cookie with the refreshToken (secure MUST be true for production)
     res.setCookie("RefreshToken", refreshToken, { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
 
-    return res.code(200).send({ AccessToken: accessToken });
+    return res.status(200).send({ AccessToken: accessToken });
   } catch (error) {
-    return res.code(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -60,9 +60,9 @@ export const logoutController = async (req: FastifyRequest, res: FastifyReply) =
   try {
     // We just need to clear the refreshToken from the cookies
     res.clearCookie("RefreshToken", { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
-    return res.code(200).send({ Status: "Logout was successful" });
+    return res.status(200).send({ Status: "Logout was successful" });
   } catch (error) {
-    return res.code(500).send(error);
+    return res.status(500).send(error);
   }
 };
 
@@ -72,8 +72,8 @@ export const refreshController = async (req: FastifyRequest, res: FastifyReply) 
     const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
     const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10s" });
 
-    return res.code(200).send({ AccessToken: accessToken });
+    return res.status(200).send({ AccessToken: accessToken });
   } catch (error) {
-    return res.code(500).send(error);
+    return res.status(500).send(error);
   }
 };
