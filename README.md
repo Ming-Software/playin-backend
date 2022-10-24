@@ -49,7 +49,7 @@ POST:
 ### Logout (/logout)
 Quando queremos dar logout, porque isto é jwt temos de eliminar o AccessToken no lado do client, no entanto como o RefreshToken está nas cookies que foram criadas do lado servidor, é este que tem de as apagar.
 ```
-POST:
+GET:
   RESPONSE:
     StatusCode: 200
     Status: String
@@ -62,7 +62,7 @@ POST:
 ### Refresh (/refresh)
 Quando o AccessToken expira, esta rota permite receber um novo token sem dar login.
 ```
-POST:
+GET:
   RESPONSE:
     StatusCode: 200
     AccessToken: String
