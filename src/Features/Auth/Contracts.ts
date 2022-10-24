@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import Activities from "../../Enums/Activity";
+import Activities from "../../Enums/Activities";
 import Social from "../../Enums/Social";
 
 // Register
