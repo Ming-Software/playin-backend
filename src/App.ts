@@ -14,7 +14,7 @@ const buildApp = () => {
   // Plugin
   app.register(FastifyAuth);
   app.register(FastifyCORS, { origin: ["http://localhost:5173", "http://127.0.0.1:5173"], credentials: true });
-  app.register(FastifyJWT, { secret: String(process.env.ACCESS_SECRET), cookie: { cookieName: "refreshToken", signed: true } });
+  app.register(FastifyJWT, { secret: String(process.env.ACCESS_SECRET), cookie: { cookieName: "RefreshToken", signed: true } });
   app.register(FastifyCookie, { secret: process.env.REFRESH_SECRET });
 
   // Decorators

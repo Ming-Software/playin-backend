@@ -70,7 +70,7 @@ export const logoutController = async (req: FastifyRequest, res: FastifyReply) =
 export const refreshController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
-    const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10m" });
+    const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10s" });
 
     return res.code(200).send({ AccessToken: accessToken });
   } catch (error) {
