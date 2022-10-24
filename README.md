@@ -17,7 +17,7 @@ POST:
 
   RESPONSE:
     StatusCode: 200
-    ID: String (vai em formato uuid)
+    Status: String (a dizer que correu tudo bem)
 
   ERROS:
     1. Devolve um erro quando o email já existe na BD
@@ -52,7 +52,7 @@ Quando queremos dar logout, porque isto é jwt temos de eliminar o AccessToken n
 GET:
   RESPONSE:
     StatusCode: 200
-    Status: String
+    Status: String (a dizer que correu bem)
 
   ERROS:
     1. Devolve um erro de Unauthorized quando o AccessToken não é valido
