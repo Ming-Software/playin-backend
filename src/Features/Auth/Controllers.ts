@@ -14,7 +14,14 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
     }
     // We now hash the password and store the user
     const hash = await hashPassword(req.body.Password);
-    const newUser = await prisma.user.create({ data: { Email: req.body.Email, Password: hash } });
+    const newUser = await prisma.user.create({
+      data: {
+        Email: req.body.Email,
+        Password: hash,
+        ActivityPreference: req.body.ActivityPreference,
+        SocialPreference: req.body.SocialPreference,
+      },
+    });
 
     return res.code(200).send(newUser);
   } catch (error) {
@@ -40,7 +47,7 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
 
     // We create a cookie with the refreshToken (secure MUST be true for production)
-    res.setCookie("RefreshToken", refreshToken, { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
+    res.setCookie("RefreshToken", refreshToken, { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
 
     return res.code(200).send({ AccessToken: accessToken });
   } catch (error) {
@@ -51,7 +58,7 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
 export const logoutController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     // We just need to clear the refreshToken from the cookies
-    res.clearCookie("RefreshToken", { path: "/", secure: false, httpOnly: true, sameSite: true, signed: true });
+    res.clearCookie("RefreshToken", { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
     return res.code(200).send({ Status: "Logout Successfully" });
   } catch (error) {
     return res.code(500).send(error);
