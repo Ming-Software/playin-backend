@@ -43,8 +43,9 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     }
 
     // We create the accessToken (expires in 10 minutes) and the refreshToken (expires in 1 week)
-    const accessToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "10m" });
-    const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
+    // To test this out on the frontend for the time being we will have 10 seconds for access and 20 seconds for refresh
+    const accessToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "10s" });
+    const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "20s" });
 
     // We create a cookie with the refreshToken (secure MUST be true for production)
     res.setCookie("RefreshToken", refreshToken, { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
