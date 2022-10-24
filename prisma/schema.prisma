@@ -18,9 +18,9 @@ model User {
   Password    String
   Description String   @default("")
 
-  Permissions        String @default("USER")
-  ActivityPreference String @default("NONE")
-  SocialPreference   String @default("NONE")
+  Permissions        String @default("User")
+  ActivityPreference String @default("None")
+  SocialPreference   String @default("None")
 
   Event            Event[]
   EventParticipant EventParticipant[]
