@@ -10,10 +10,10 @@ const authRoutes = async (app: FastifyInstance) => {
   app.post("/login", { schema: { body: loginBody, response: { 200: loginResponse } } }, loginController);
 
   // Refresh
-  app.get("/refresh", { schema: { response: refreshResponse } }, refreshController);
+  app.get("/refresh", { schema: { response: { 200: refreshResponse } } }, refreshController);
 
   // Logout
-  app.get("/logout", { preHandler: app.auth([app.verifyAccessJWT]), schema: { response: logoutResponse } }, logoutController);
+  app.get("/logout", { preHandler: app.auth([app.verifyAccessJWT]), schema: { response: { 200: logoutResponse } } }, logoutController);
 
   // Health
   app.get("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
