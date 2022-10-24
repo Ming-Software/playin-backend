@@ -14,7 +14,7 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
     }
     // We now hash the password and store the user
     const hash = await hashPassword(req.body.Password);
-    const newUser = await prisma.user.create({
+    await prisma.user.create({
       data: {
         Email: req.body.Email,
         Password: hash,
@@ -23,7 +23,7 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
       },
     });
 
-    return res.code(200).send(newUser);
+    return res.code(200).send({ Status: "Register was successful" });
   } catch (error) {
     return res.code(500).send(error);
   }
@@ -60,7 +60,7 @@ export const logoutController = async (req: FastifyRequest, res: FastifyReply) =
   try {
     // We just need to clear the refreshToken from the cookies
     res.clearCookie("RefreshToken", { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
-    return res.code(200).send({ Status: "Logout Successfully" });
+    return res.code(200).send({ Status: "Logout was successful" });
   } catch (error) {
     return res.code(500).send(error);
   }

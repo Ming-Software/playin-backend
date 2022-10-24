@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { loginBody, loginResponse, registerBody, registerResponse } from "./Contracts";
+import { loginBody, loginResponse, logoutResponse, registerBody, registerResponse, refreshResponse } from "./Contracts";
 import { loginController, logoutController, registerController, refreshController } from "./Controllers";
 
 const authRoutes = async (app: FastifyInstance) => {
@@ -10,10 +10,10 @@ const authRoutes = async (app: FastifyInstance) => {
   app.post("/login", { schema: { body: loginBody, response: { 200: loginResponse } } }, loginController);
 
   // Refresh
-  app.get("/refresh", refreshController);
+  app.get("/refresh", { schema: { response: refreshResponse } }, refreshController);
 
   // Logout
-  app.get("/logout", { preHandler: app.auth([app.verifyAccessJWT]) }, logoutController);
+  app.get("/logout", { preHandler: app.auth([app.verifyAccessJWT]), schema: { response: logoutResponse } }, logoutController);
 
   // Health
   app.get("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {

@@ -11,7 +11,7 @@ export const registerBody = Type.Object({
 });
 
 export const registerResponse = Type.Object({
-  ID: Type.String({ format: "uuid" }),
+  Status: Type.String(),
 });
 
 // Login
@@ -22,4 +22,14 @@ export const loginBody = Type.Object({
 
 export const loginResponse = Type.Object({
   AccessToken: Type.String(),
+});
+
+// Refresh
+export const refreshResponse = Type.Object({
+  AccessToken: Type.String(),
+});
+
+// Logout
+export const logoutResponse = Type.Object({
+  Status: Type.String(),
 });
