@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { loginBody, loginResponse, logoutResponse, registerBody, registerResponse, refreshResponse } from "./Contracts";
 import { loginController, logoutController, registerController, refreshController } from "./Controllers";
 
@@ -15,21 +15,21 @@ const authRoutes = async (app: FastifyInstance) => {
   // Logout
   app.get("/logout", { preHandler: app.auth([app.verifyAccessJWT]), schema: { response: { 200: logoutResponse } } }, logoutController);
 
-  // Health
-  app.get("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
-    return { Status: "OK" };
+  // Auth Health Checks
+  app.get("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
+    return { Status: "OK", ID: req.user.ID };
   });
-  app.post("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
-    return { Status: "OK" };
+  app.post("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
+    return { Status: "OK", ID: req.user.ID };
   });
-  app.put("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
-    return { Status: "OK" };
+  app.put("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
+    return { Status: "OK", ID: req.user.ID };
   });
-  app.patch("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
-    return { Status: "OK" };
+  app.patch("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
+    return { Status: "OK", ID: req.user.ID };
   });
-  app.delete("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async () => {
-    return { Status: "OK" };
+  app.delete("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
+    return { Status: "OK", ID: req.user.ID };
   });
 };
 
