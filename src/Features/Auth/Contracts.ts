@@ -1,13 +1,16 @@
 import { Type } from "@sinclair/typebox";
 import Activities from "../../Enums/Activities";
+import Admin from "../../Enums/Admin";
 import Social from "../../Enums/Social";
 
 // Register
 export const registerBody = Type.Object({
   Email: Type.String({ format: "email" }),
   Password: Type.String(),
-  ActivityPreference: Type.String({ default: Activities.NONE }),
-  SocialPreference: Type.String({ default: Social.NONE }),
+  Name: Type.String(),
+  Admin: Type.Boolean({ default: Admin.USER }),
+  Social: Type.String({ default: Social.NONE }),
+  Activities: Type.Array(Type.String(), { default: [Activities.NONE] }),
 });
 
 export const registerResponse = Type.Object({
