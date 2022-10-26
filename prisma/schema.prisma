@@ -37,7 +37,7 @@ model Event {
   Description String
   Date        DateTime
   Locale      String
-  Duration    String
+  Duration    DateTime
 
   Public       Boolean @default(true)
   MaxUsers     Int
