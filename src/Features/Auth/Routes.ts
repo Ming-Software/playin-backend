@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { loginBody, loginResponse, logoutResponse, registerBody, registerResponse, refreshResponse } from "./Contracts";
-import { loginController, logoutController, registerController, refreshController } from "./Controllers";
+import { loginController, logoutController, registerController, refreshController, addActivity } from "./Controllers";
 
 const authRoutes = async (app: FastifyInstance) => {
   // Register
@@ -31,6 +31,8 @@ const authRoutes = async (app: FastifyInstance) => {
   app.delete("/health", { preHandler: app.auth([app.verifyAccessJWT]) }, async (req: FastifyRequest, _res: FastifyReply) => {
     return { Status: "OK", ID: req.user.ID };
   });
+
+  app.post("/activity", addActivity);
 };
 
 export default authRoutes;

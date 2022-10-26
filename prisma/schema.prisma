@@ -16,17 +16,18 @@ model User {
   ID          String   @id @default(uuid())
   Email       String   @unique
   Password    String
+  Name        String
   Description String   @default("")
 
-  Permissions        String @default("User")
-  ActivityPreference String @default("None")
-  SocialPreference   String @default("None")
+  Admin      Boolean        @default(false)
+  Social     String         @default("None") // None || Competitivo || Casual
+  Activities UserActivity[]
 
   Event            Event[]
-  EventParticipant EventParticipant[]
-  EventGuest       EventGuest[]
-  EventPermission  EventPermission[]
   Message          Message[]
+  EventGuest       EventGuest[]
+  EventParticipant EventParticipant[]
+  EventPermission  EventPermission[]
 }
 
 model Event {
@@ -38,43 +39,22 @@ model Event {
   Locale      String
   Duration    String
 
-  Public              Boolean @default(true)
-  MaxParticipants     Int
-  CurrentParticipants Int
-  ActivityType        String
-  SocialType          String
+  Public       Boolean @default(true)
+  MaxUsers     Int
+  CurrentUsers Int
+
+  Social     String   @default("None") // None || Competitivo || Casual
+  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
+  ActivityID String
 
   User   User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID String
 
-  EventParticipant EventParticipant[]
+  Message Message[]
+
   EventGuest       EventGuest[]
+  EventParticipant EventParticipant[]
   EventPermission  EventPermission[]
-  Message          Message[]
-}
-
-model EventParticipant {
-  ID      String @id @default(uuid())
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
-  UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
-  EventID String
-}
-
-model EventGuest {
-  ID      String @id @default(uuid())
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
-  UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
-  EventID String
-}
-
-model EventPermission {
-  ID      String @id @default(uuid())
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
-  UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
-  EventID String
 }
 
 model Message {
@@ -86,4 +66,53 @@ model Message {
   UserID  String
   Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
   EventID String
+}
+
+model Activity {
+  CreatedAt DateTime @default(now())
+  ID        String   @id @default(uuid())
+  Name      String   @unique // None || Futebol || Futsal || Voleibol || Padel || Tenis
+
+  Event Event[]
+  User  UserActivity[]
+}
+
+// Many to Many
+// Alguem que foi convidado
+model EventGuest {
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+
+  @@id([UserID, EventID])
+}
+
+// Alguem que vai participar
+model EventParticipant {
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+
+  @@id([UserID, EventID])
+}
+
+// Alguem que pede para participar
+model EventPermission {
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID  String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  EventID String
+
+  @@id([UserID, EventID])
+}
+
+model UserActivity {
+  User       User     @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  UserID     String
+  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
+  ActivityID String
+
+  @@id([UserID, ActivityID])
 }
