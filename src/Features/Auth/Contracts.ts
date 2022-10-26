@@ -9,8 +9,8 @@ export const registerBody = Type.Object({
   Password: Type.String(),
   Name: Type.String(),
   Admin: Type.Boolean({ default: Admin.USER }),
-  Social: Type.String({ default: Social.NONE }),
-  Activities: Type.Array(Type.String(), { default: [Activities.NONE] }),
+  Social: Type.String({ default: Social.NONE, examples: Social }),
+  Activities: Type.Array(Type.String({ examples: Activities }), { default: [Activities.NONE] }),
 });
 
 export const registerResponse = Type.Object({
