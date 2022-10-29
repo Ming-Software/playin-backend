@@ -8,7 +8,7 @@ export const getUserResponse = Type.Object({
   Email: Type.String({ format: "email" }),
   Name: Type.String(),
   Description: Type.String(),
-  Social: Type.String({ examples: Social }),
-  Activities: Type.Array(Type.String({ examples: Activities })),
+  Social: Type.String(),
+  Activities: Type.Array(Type.String()),
   Admin: Type.Boolean(),
 });

@@ -35,9 +35,9 @@ model Event {
   ID          String   @id @default(uuid())
   Name        String
   Description String
-  Date        DateTime
+  Start       DateTime
   Locale      String
-  Duration    DateTime
+  Finish      DateTime
 
   Public       Boolean @default(true)
   MaxUsers     Int
