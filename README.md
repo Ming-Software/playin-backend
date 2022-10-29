@@ -26,7 +26,7 @@ POST:
       Password:   String
       Name:       String,
       Admin:      Boolean  (Default: false)
-      Social:     String   (Default: "Social")
+      Social:     String   (Default: "Casual")
       Activities: String[] (Default: None)
 
   RESPONSE:
