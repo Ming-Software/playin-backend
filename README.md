@@ -14,6 +14,10 @@ POST:
     BODY:
       Email: String (precisa de estar no formato email),
       Password: String
+      Name: String,
+      Admin: Boolean (Opcional) (Default: false)
+      Social: String("None", "Competitivo", "Social") (Opcional) (Default: "Social")
+      Activities: String[]("None", "Futebol", "Futsal", "Voleibol", "Basquetebol", "Padel", "Tenis") (Opcional) (Default: None)
 
   RESPONSE:
     StatusCode: 200
@@ -32,10 +36,6 @@ POST:
     BODY:
       Email: String (precisa de estar no formato email),
       Password: String
-      Name: String,
-      Admin: Boolean (Opcional) (Default: false)
-      Social: String("None", "Competitivo", "Social") (Opcional) (Default: "Social")
-      Activities: String[]("None", "Futebol", "Futsal", "Voleibol", "Basquetebol", "Padel", "Tenis") (Opcional) (Default: None)
  
   RESPONSE:
     StatusCode: 200
