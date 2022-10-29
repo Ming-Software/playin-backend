@@ -1,9 +1,7 @@
-import { Activity } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
-import Activities from "../../Enums/Activities";
 
-export const getUserController = async (req: FastifyRequest, res: FastifyReply) => {
+export const getUserDetailsController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
     const userActivities = await prisma.userActivity.findMany({ where: { UserID: req.user.ID } });
@@ -16,6 +14,27 @@ export const getUserController = async (req: FastifyRequest, res: FastifyReply) 
     );
 
     res.status(200).send({ ...user, Activities: activities });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+export const getUserController = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
+
+    res.status(200).send({ ...user });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+export const deleteUserController = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
+    const user = await prisma.user.delete({ where: { ID: req.user.ID } });
+    await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } });
+
+    res.status(200).send({ ...user });
   } catch (error) {
     return res.status(500).send(error);
   }
