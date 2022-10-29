@@ -5,7 +5,7 @@ O domínio para os pedidos à backend é **playin-backend.fly.dev**
 
 ## Notas
 ### Tipos De Social
-Os valores possiveis em social são: "None", "Competitivo", "Social". Em que "None" significa que não interessa ao utilizador o tipo.
+Os valores possiveis em social são: "None", "Competitivo", "Casual". Em que "None" significa que não interessa ao utilizador o tipo.
 
 ### Tipos De Atividade
 Os valores possiveis em atividade são: "None", "Futebol", "Futsal", "Voleibol", "Basquetebol", "Padel", "Tenis". Em que "None" significa que o utilizador está disposto a participar em todo o tipo de atividades.
