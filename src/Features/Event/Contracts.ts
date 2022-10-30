@@ -1,7 +1,4 @@
 import { Type } from "@sinclair/typebox";
-import Activities from "../../Enums/Activities";
-import Admin from "../../Enums/Admin";
-import Social from "../../Enums/Social";
 import EventStatus from "../../Enums/Event";
 
 // New Eveny
@@ -18,13 +15,14 @@ export const newEventBody = Type.Object({
   Social: Type.String(),
 });
 
-export const newEventResponse = Type.Object({
+export const statusEventResponse = Type.Object({
   Status: Type.String({ default: "OK" }),
 });
 
 // Get Event
 export const getEventsResponse = Type.Array(
   Type.Object({
+    ID: Type.String(),
     Name: Type.String(),
     Description: Type.String(),
     Start: Type.String({ format: "date-time" }),
@@ -39,6 +37,7 @@ export const getEventsResponse = Type.Array(
 );
 
 export const getEventResponse = Type.Object({
+  ID: Type.String(),
   Name: Type.String(),
   Description: Type.String(),
   Start: Type.String({ format: "date-time" }),
@@ -64,6 +63,6 @@ export const patchEventBody = Type.Object({
   Social: Type.Optional(Type.String()),
 });
 
-export const patchEventParams = Type.Object({
+export const eventIdParams = Type.Object({
   eventID: Type.String(),
 });
