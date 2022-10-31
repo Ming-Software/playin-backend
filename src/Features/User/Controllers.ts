@@ -49,7 +49,7 @@ export const deleteUserController = async (req: FastifyRequest, res: FastifyRepl
 // Patch User
 export const patchUserController = async (req: FastifyRequest<{ Body: Static<typeof patchUserRequest> }>, res: FastifyReply) => {
   try {
-    const user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
+    let user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
 
     if (!user) {
       return res.status(500).send(new Error("Email does not exists"));
@@ -60,29 +60,29 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
       if (userMail) {
         return res.status(500).send(new Error("Email already exists"));
       } else {
-        const user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Email: req.body.Email } });
+        user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Email: req.body.Email } });
       }
     }
 
     if (req.body.Name) {
-      const user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Name: req.body.Name } });
+      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Name: req.body.Name } });
     }
 
     if (req.body.Description) {
-      const user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Description: req.body.Description } });
+      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Description: req.body.Description } });
     }
 
     if (req.body.Social) {
-      const user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Social: req.body.Social } });
+      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Social: req.body.Social } });
     }
 
+    let activities = [];
     if (req.body.Activities) {
-      await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } });
+      await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } }); // Remove todos os elementos
       const incNone = req.body.Activities.includes(Activities.NONE); // Verifica se o None está pesente
       if (incNone && req.body.Activities.length > 1) {
         const index = req.body.Activities.indexOf(Activities.NONE); // Devolve o indice do None no array
         req.body.Activities.splice(index, 1); // Remove o None
-        console.log(req.body.Activities);
       }
 
       for (let Name of req.body.Activities) {
@@ -90,20 +90,12 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
         // If the activity exists
         if (activity) {
           await prisma.userActivity.create({ data: { UserID: user.ID, ActivityID: activity.ID } });
+          activities.push(activity.Name);
         }
       }
     }
 
-    const userActivities = await prisma.userActivity.findMany({ where: { UserID: req.user.ID } });
-    const activities = await Promise.all(
-      userActivities.map(
-        async (userActivity) =>
-          await prisma.activity.findUnique({ where: { ID: userActivity.ActivityID } }).then((activity) => activity?.Name)
-      )
-    );
-
-    const userF = await prisma.user.findUnique({ where: { ID: req.user.ID } });
-    res.status(200).send({ ...userF, Activities: activities });
+    res.status(200).send({ ...user, Activities: activities });
   } catch (error) {
     return res.status(500).send(error);
   }
