@@ -1,7 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import EventStatus from "../../Enums/Event";
 
-// New Eveny
+// New Event
 export const newEventBody = Type.Object({
   Name: Type.String(),
   Description: Type.String(),
@@ -65,4 +65,8 @@ export const patchEventBody = Type.Object({
 
 export const eventIdParams = Type.Object({
   eventID: Type.String(),
+});
+
+export const userIdParams = Type.Object({
+  userID: Type.String(),
 });
