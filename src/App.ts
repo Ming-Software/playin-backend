@@ -5,6 +5,7 @@ import FastifyCookie from "@fastify/cookie";
 import FastifyAuth from "@fastify/auth";
 
 import authRoutes from "./Features/Auth/Routes";
+import userRoutes from "./Features/User/Routes";
 import eventRoutes from "./Features/Event/Routes";
 
 import { verifyAccessJWT } from "./Decorators/JWT";
@@ -25,6 +26,7 @@ const buildApp = () => {
 
   // Routes
   app.register(authRoutes, { prefix: "/api/auth" });
+  app.register(userRoutes, { prefix: "/api/user" });
   app.register(eventRoutes, { prefix: "/api" })
 
   // Checks the server connection
