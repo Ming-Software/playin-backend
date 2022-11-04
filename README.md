@@ -193,7 +193,7 @@ PATCH:
 
 ```
 
-### Get Users Page (/userspage?page=1)
+### Get Users Page (/userspage/:page)
 
 Quando quer uma página com utilizadores.
 
@@ -204,6 +204,43 @@ DELETE:
     ID:           String   (Formato: uuid),
     Name:         String,
     Description:  String
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+
+```
+
+### Get all event users (/event/:eventID)
+
+Quando quer os utilizadores de um evento.
+
+```
+GET:
+  RESPONSE:
+    StatusCode:  200
+    [
+    ID:           String   (Formato: uuid),
+    Name:         String,
+    Description:  String
+    ]
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+
+```
+
+### Remove a user from an event (/event/:eventID/:userID)
+
+Quando quer remover um utilizador de um evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:           String   (Formato: uuid),
+    Name:         String
 
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido

@@ -48,3 +48,31 @@ export const getUsersPageResponse = Type.Array(
     Description: Type.String(),
   })
 );
+
+export const pageParams = Type.Object({
+  page: Type.Number(),
+});
+
+// get all event users
+export const getAllEventUsers = Type.Array(
+  Type.Object({
+    ID: Type.String(),
+    Name: Type.String(),
+    Description: Type.String(),
+  })
+);
+
+export const eventIdParams = Type.Object({
+  eventID: Type.String(),
+});
+
+// Remove a user from an event
+export const removeUserEvent = Type.Object({
+  ID: Type.String(),
+  Name: Type.String(),
+});
+
+export const eventUserIdParams = Type.Object({
+  eventID: Type.String(),
+  userID: Type.String(),
+});
