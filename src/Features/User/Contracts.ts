@@ -39,3 +39,12 @@ export const patchUserResponse = Type.Object({
   Social: Type.String(),
   Activities: Type.Array(Type.String()),
 });
+
+// Get Users with page query
+export const getUsersPageResponse = Type.Array(
+  Type.Object({
+    ID: Type.String(),
+    Name: Type.String(),
+    Description: Type.String(),
+  })
+);

@@ -1,6 +1,20 @@
 import { FastifyInstance } from "fastify";
-import { getUserDetailsResponse, getUserResponse, deleteUserResponse, patchUserResponse, patchUserRequest } from "./Contracts";
-import { getUserDetailsController, getUserController, deleteUserController, patchUserController } from "./Controllers";
+import { Type } from "@sinclair/typebox";
+import {
+  getUserDetailsResponse,
+  getUserResponse,
+  deleteUserResponse,
+  patchUserResponse,
+  patchUserRequest,
+  getUsersPageResponse,
+} from "./Contracts";
+import {
+  getUserDetailsController,
+  getUserController,
+  deleteUserController,
+  patchUserController,
+  getUsersPageController,
+} from "./Controllers";
 
 const userRoutes = async (app: FastifyInstance) => {
   // get
@@ -25,6 +39,16 @@ const userRoutes = async (app: FastifyInstance) => {
     "/",
     { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: patchUserRequest, response: { 200: patchUserResponse } } },
     patchUserController
+  );
+
+  // getUsersPage
+  app.get(
+    "/userspage",
+    {
+      preHandler: app.auth([app.verifyAccessJWT]) as any,
+      schema: { querystring: { page: Type.Number() }, response: { 200: getUsersPageResponse } },
+    },
+    getUsersPageController
   );
 };
 
