@@ -145,6 +145,7 @@ export const removeUserEventController = async (req: FastifyRequest<{ Params: St
       where: { UserID_EventID: { EventID: req.params.eventID, UserID: req.params.userID } },
     });
     const user = await prisma.user.findUnique({ where: { ID: userID.UserID } });
+    if (!user) return res.status(500).send(new Error("User is not associated with the event"));
 
     return res.status(200).send(user);
   } catch (error) {

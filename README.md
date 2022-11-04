@@ -228,6 +228,7 @@ GET:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
 
 ```
 
@@ -245,5 +246,6 @@ DELETE:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o utilizador nao estiver associado ao evento
 
 ```
