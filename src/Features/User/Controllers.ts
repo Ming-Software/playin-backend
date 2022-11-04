@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
 import { patchUserRequest } from "./Contracts";
-import { Static } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import Activities from "../../Enums/Activities";
 
 // Get user Details
@@ -96,6 +96,18 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
     }
 
     res.status(200).send({ ...user, Activities: activities });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+//getUsersPage
+export const getUsersPageController = async (req: FastifyRequest<{ Querystring: { page: number } }>, res: FastifyReply) => {
+  try {
+    const usersPerPage = 30;
+    const user = await prisma.user.findMany({ skip: (req.query.page - 1) * usersPerPage, take: usersPerPage });
+
+    res.status(200).send(user);
   } catch (error) {
     return res.status(500).send(error);
   }
