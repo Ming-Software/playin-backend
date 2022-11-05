@@ -33,7 +33,7 @@ const buildApp = () => {
   app.register(guestRoutes, { prefix: "/api/guest" });
   app.register(permissionRoutes, { prefix: "/api/permission" });
   app.register(participantRoutes, { prefix: "/api/participant" });
-  app.register(eventRoutes, { prefix: "/api" });
+  app.register(eventRoutes, { prefix: "/api/event" });
 
   // Checks the server connection
   app.get("/health", () => {
