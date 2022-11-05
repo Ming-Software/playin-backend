@@ -1,10 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
-import { patchUserRequest, eventIdParams, pageParams } from "./Contracts";
-import { Static, Type } from "@sinclair/typebox";
-import { User, Event, Activity } from ".prisma/client";
+import { patchUserRequest, eventIdParams, pageQuery } from "./Contracts";
+import { Static } from "@sinclair/typebox";
+import { User } from ".prisma/client";
 import Activities from "../../Enums/Activities";
-import { start } from "repl";
 
 // Get user Details
 export const getUserDetailsController = async (req: FastifyRequest, res: FastifyReply) => {
@@ -104,10 +103,10 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
 };
 
 //getUsersPage
-export const getUsersPageController = async (req: FastifyRequest<{ Params: Static<typeof pageParams> }>, res: FastifyReply) => {
+export const getUsersPageController = async (req: FastifyRequest<{ Querystring: Static<typeof pageQuery> }>, res: FastifyReply) => {
   try {
     const usersPerPage = 30;
-    const user = await prisma.user.findMany({ skip: (req.params.page - 1) * usersPerPage, take: usersPerPage });
+    const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
 
     res.status(200).send(user);
   } catch (error) {

@@ -1,5 +1,4 @@
 import { FastifyInstance } from "fastify";
-import { Type } from "@sinclair/typebox";
 import {
   getUserDetailsResponse,
   getUserResponse,
@@ -8,6 +7,7 @@ import {
   patchUserRequest,
   getUsersPageResponse,
   getAllEventUsers,
+  pageQuery,
 } from "./Contracts";
 import {
   getUserDetailsController,
@@ -45,10 +45,10 @@ const userRoutes = async (app: FastifyInstance) => {
 
   // getUsersPage
   app.get(
-    "/userspage/:page",
+    "/userspage",
     {
       preHandler: app.auth([app.verifyAccessJWT]) as any,
-      schema: { querystring: { page: Type.Number() }, response: { 200: getUsersPageResponse } },
+      schema: { querystring: pageQuery, response: { 200: getUsersPageResponse } },
     },
     getUsersPageController
   );

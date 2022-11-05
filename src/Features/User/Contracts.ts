@@ -1,5 +1,4 @@
 import { Type } from "@sinclair/typebox";
-import EventStatus from "../../Enums/Event";
 
 // get user details
 export const getUserDetailsResponse = Type.Object({
@@ -50,8 +49,8 @@ export const getUsersPageResponse = Type.Array(
   })
 );
 
-export const pageParams = Type.Object({
-  page: Type.Number(),
+export const pageQuery = Type.Object({
+  Page: Type.Number(),
 });
 
 // get all event users

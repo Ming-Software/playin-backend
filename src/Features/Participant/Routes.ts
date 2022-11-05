@@ -10,3 +10,5 @@ const participantRoutes = async (app: FastifyInstance) => {
     removeUserEventController
   );
 };
+
+export default participantRoutes;
