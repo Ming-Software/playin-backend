@@ -70,3 +70,18 @@ export const eventIdParams = Type.Object({
 export const userIdParams = Type.Object({
   userID: Type.String(),
 });
+
+export const userIdEventIdParams = Type.Object({
+  eventID: Type.String({ format: "uuid" }),
+  userID: Type.String({ format: "uuid" }),
+});
+
+// Invite Users
+export const inviteUsersRequest = Type.Array(Type.String());
+export const inviteUsersResponse = Type.Array(Type.String());
+
+// Remove an invite from an event
+export const removeInviteUsersResponse = Type.Object({
+  ID: Type.String({ format: "uuid" }),
+  Name: Type.String(),
+});
