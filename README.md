@@ -270,7 +270,7 @@ GET:
 
 ```
 
-### Delete (/events/:eventID)
+### Delete (/users/:eventID)
 
 Quando quer remover um evento.
 
@@ -328,10 +328,10 @@ PATCH:
 
 ### Create Event (/events)
 
-Quando quer uma página com utilizadores.
+Quando quer crear um evento.
 
 ```
-PATCH:
+POST:
   REQUEST:
       BODY: 
         Name: String,
@@ -345,7 +345,6 @@ PATCH:
         Activity: String,
         Social: String,
 
-POST:
   RESPONSE:
     StatusCode:  200
     Status:     String (a dizer que correu bem)
