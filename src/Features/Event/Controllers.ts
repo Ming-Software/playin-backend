@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { Static } from "@sinclair/typebox";
 
 import prisma from "../../Utils/Prisma";
-import { newEventBody, patchEventBody, eventIdParams, userIdParams } from "./Contracts";
+import { newEventBody, patchEventBody, eventIdParams, userIdParams, getEventsPageQuery } from "./Contracts";
 import { start } from "repl";
 
 export const getEventsController = async (req: FastifyRequest, res: FastifyReply) => {
@@ -124,6 +124,20 @@ export const getUserEventsController = async (req: FastifyRequest<{ Params: Stat
       })
     );
     return res.status(200).send(newAllEvents);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+export const getEventsPageController = async (
+  req: FastifyRequest<{ Querystring: Static<typeof getEventsPageQuery> }>,
+  res: FastifyReply
+) => {
+  try {
+    const eventsPerPage = 30;
+    const events = await prisma.event.findMany({ skip: (req.query.Page - 1) * eventsPerPage, take: eventsPerPage });
+    console.log(events);
+    res.status(200).send(events);
   } catch (error) {
     return res.status(500).send(error);
   }
