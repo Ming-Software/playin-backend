@@ -27,7 +27,7 @@ const buildApp = () => {
   // Routes
   app.register(authRoutes, { prefix: "/api/auth" });
   app.register(userRoutes, { prefix: "/api/user" });
-  app.register(eventRoutes, { prefix: "/api" })
+  app.register(eventRoutes, { prefix: "/api/event" });
 
   // Checks the server connection
   app.get("/health", () => {
