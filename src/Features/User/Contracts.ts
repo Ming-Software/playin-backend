@@ -48,3 +48,20 @@ export const getUsersPageResponse = Type.Array(
     Description: Type.String(),
   })
 );
+
+export const pageQuery = Type.Object({
+  Page: Type.Number(),
+});
+
+// get all event users
+export const getAllEventUsers = Type.Array(
+  Type.Object({
+    ID: Type.String(),
+    Name: Type.String(),
+    Description: Type.String(),
+  })
+);
+
+export const eventIdParams = Type.Object({
+  eventID: Type.String(),
+});

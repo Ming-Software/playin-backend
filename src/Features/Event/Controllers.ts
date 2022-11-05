@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { Static } from "@sinclair/typebox";
-
 import prisma from "../../Utils/Prisma";
 import { newEventBody, patchEventBody, eventIdParams, userIdParams, getEventsPageQuery } from "./Contracts";
 import { start } from "repl";
+
 
 export const getEventsController = async (req: FastifyRequest, res: FastifyReply) => {
   try {

@@ -71,6 +71,11 @@ export const userIdParams = Type.Object({
   userID: Type.String({ format: "uuid" }),
 });
 
+export const userIdEventIdParams = Type.Object({
+  eventID: Type.String({ format: "uuid" }),
+  userID: Type.String({ format: "uuid" }),
+});
+
 export const getEventsPageQuery = Type.Object({
   Page: Type.Number(),
 });

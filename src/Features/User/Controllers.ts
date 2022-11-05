@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
-import { patchUserRequest } from "./Contracts";
-import { Static, Type } from "@sinclair/typebox";
+import { patchUserRequest, eventIdParams, pageQuery } from "./Contracts";
+import { Static } from "@sinclair/typebox";
+import { User } from ".prisma/client";
 import Activities from "../../Enums/Activities";
 
 // Get user Details
@@ -102,12 +103,35 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
 };
 
 //getUsersPage
-export const getUsersPageController = async (req: FastifyRequest<{ Querystring: { page: number } }>, res: FastifyReply) => {
+export const getUsersPageController = async (req: FastifyRequest<{ Querystring: Static<typeof pageQuery> }>, res: FastifyReply) => {
   try {
     const usersPerPage = 30;
-    const user = await prisma.user.findMany({ skip: (req.query.page - 1) * usersPerPage, take: usersPerPage });
+    const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
 
     res.status(200).send(user);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+// get all event users
+export const getAllEventUsersController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
+  try {
+    let users: User[] = [];
+    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
+    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
+
+    const usersIDs = await prisma.eventParticipant.findMany({ where: { EventID: req.params.eventID } });
+    await Promise.all(
+      usersIDs.map(async function (userId) {
+        const user = await prisma.user.findUnique({ where: { ID: userId.UserID } });
+        if (user) {
+          users.push(user);
+        }
+      })
+    );
+
+    return res.status(200).send(users);
   } catch (error) {
     return res.status(500).send(error);
   }

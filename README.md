@@ -193,7 +193,7 @@ PATCH:
 
 ```
 
-### Get Users Page (/userspage?page=1)
+### Get Users Page (/userspage/:page)
 
 Quando quer uma página com utilizadores.
 
@@ -210,7 +210,6 @@ DELETE:
     2. Devolve um erro se alguma coisa correr mal
 
 ```
---------------------------------------------
 
 ## Event (/api)
 
@@ -239,6 +238,20 @@ GET:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+
+```
+
+### Remove a user from an event (/event/:eventID/:userID)
+
+Quando quer remover um utilizador de um evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:           String   (Formato: uuid),
+    Name:         String
 
 ```
 
@@ -267,6 +280,7 @@ GET:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o utilizador nao estiver associado ao evento
 
 ```
 
@@ -323,6 +337,20 @@ PATCH:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+
+```
+
+### Remove an invite from an event (/event/invite/:eventID/:userID)
+
+Remove o convite de participação no evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:     String   (Formato: uuid)
+    NAME:   String
 
 ```
 
@@ -352,5 +380,7 @@ POST:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+    4. Devolve um erro se o user não existir
 
 ```
