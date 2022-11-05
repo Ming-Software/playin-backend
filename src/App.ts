@@ -9,6 +9,9 @@ import userRoutes from "./Features/User/Routes";
 import eventRoutes from "./Features/Event/Routes";
 
 import { verifyAccessJWT } from "./Decorators/JWT";
+import guestRoutes from "./Features/Guest/Routes";
+import permissionRoutes from "./Features/Permission/Routes";
+import participantRoutes from "./Features/Participant/Routes";
 
 const buildApp = () => {
   const app = Fastify();
@@ -27,7 +30,10 @@ const buildApp = () => {
   // Routes
   app.register(authRoutes, { prefix: "/api/auth" });
   app.register(userRoutes, { prefix: "/api/user" });
-  app.register(eventRoutes, { prefix: "/api" })
+  app.register(guestRoutes, { prefix: "/api/guest" });
+  app.register(permissionRoutes, { prefix: "/api/permission" });
+  app.register(participantRoutes, { prefix: "/api/participant" });
+  app.register(eventRoutes, { prefix: "/api" });
 
   // Checks the server connection
   app.get("/health", () => {

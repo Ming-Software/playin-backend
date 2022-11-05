@@ -8,7 +8,6 @@ import {
   patchUserRequest,
   getUsersPageResponse,
   getAllEventUsers,
-  removeUserEvent,
 } from "./Contracts";
 import {
   getUserDetailsController,
@@ -17,7 +16,6 @@ import {
   patchUserController,
   getUsersPageController,
   getAllEventUsersController,
-  removeUserEventController,
 } from "./Controllers";
 
 const userRoutes = async (app: FastifyInstance) => {
@@ -60,13 +58,6 @@ const userRoutes = async (app: FastifyInstance) => {
     "/event/:eventID",
     { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getAllEventUsers } } },
     getAllEventUsersController
-  );
-
-  // Remove a user from an event
-  app.delete(
-    "/event/:eventID/:userID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: removeUserEvent } } },
-    removeUserEventController
   );
 };
 

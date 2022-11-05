@@ -1,10 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
-import { patchUserRequest, eventIdParams, eventUserIdParams, pageParams } from "./Contracts";
+import { patchUserRequest, eventIdParams, pageParams } from "./Contracts";
 import { Static, Type } from "@sinclair/typebox";
+import { User, Event, Activity } from ".prisma/client";
 import Activities from "../../Enums/Activities";
-import { UserType } from "@fastify/jwt";
-import { User } from ".prisma/client";
+import { start } from "repl";
 
 // Get user Details
 export const getUserDetailsController = async (req: FastifyRequest, res: FastifyReply) => {
@@ -133,21 +133,6 @@ export const getAllEventUsersController = async (req: FastifyRequest<{ Params: S
     );
 
     return res.status(200).send(users);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
-
-// Remove a user from an event
-export const removeUserEventController = async (req: FastifyRequest<{ Params: Static<typeof eventUserIdParams> }>, res: FastifyReply) => {
-  try {
-    const userID = await prisma.eventParticipant.delete({
-      where: { UserID_EventID: { EventID: req.params.eventID, UserID: req.params.userID } },
-    });
-    const user = await prisma.user.findUnique({ where: { ID: userID.UserID } });
-    if (!user) return res.status(500).send(new Error("User is not associated with the event"));
-
-    return res.status(200).send(user);
   } catch (error) {
     return res.status(500).send(error);
   }

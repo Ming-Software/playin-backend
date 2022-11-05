@@ -1,4 +1,5 @@
 import { Type } from "@sinclair/typebox";
+import EventStatus from "../../Enums/Event";
 
 // get user details
 export const getUserDetailsResponse = Type.Object({
@@ -64,15 +65,4 @@ export const getAllEventUsers = Type.Array(
 
 export const eventIdParams = Type.Object({
   eventID: Type.String(),
-});
-
-// Remove a user from an event
-export const removeUserEvent = Type.Object({
-  ID: Type.String(),
-  Name: Type.String(),
-});
-
-export const eventUserIdParams = Type.Object({
-  eventID: Type.String(),
-  userID: Type.String(),
 });
