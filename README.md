@@ -249,3 +249,50 @@ DELETE:
     3. Devolve um erro se o utilizador nao estiver associado ao evento
 
 ```
+
+## Event (/)
+
+Aqui estão os endpoints que remetem para ações dos eventos. Para poder realizar estas ações o utilizador tem de estar logado.
+
+### Invite Users (/event/invite/:eventID)
+
+Envia convites aos utilizadores para participar no evento.
+
+```
+POST:
+  REQUEST:
+    [
+    ID:           String   (Formato: uuid)
+    ]
+
+  RESPONSE:
+    StatusCode:  200
+    [
+    ID:           String   (Formato: uuid)
+    ]
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+
+```
+
+### Remove an invite from an event (/event/invite/:eventID/:userID)
+
+Remove o convite de participação no evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:     String   (Formato: uuid)
+    NAME:   String
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+    4. Devolve um erro se o user não existir
+
+```
