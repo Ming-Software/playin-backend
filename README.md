@@ -342,22 +342,8 @@ PATCH:
     3. Devolve um erro se o evento não existir
 
 ```
-# A organizar por secções novas (Guest Participant e Permission)
 
-### Remove a user from an event (/:eventID/:userID)
-
-Quando quer remover um utilizador de um evento.
-
-```
-DELETE:
-  RESPONSE:
-    StatusCode:  200
-    ID:           String   (Formato: uuid),
-    Name:         String
-
-```
-
-### Delete (/users/:eventID)
+### Delete (/:eventID)
 
 Quando quer remover um evento.
 
@@ -370,6 +356,52 @@ DELETE:
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
+
+```
+
+### Get page (/eventspage)
+
+Quando queremos uma pagina de eventos (30 eventos)
+
+```
+GET:
+  QUERY:
+    Page: Number
+    
+  RESPONSE:
+    [
+      ID: String,
+      Name: String,
+      Description: String,
+      Start: String format("date-time"),
+      Finish: String format("date-time"),
+      Public: Boolean,
+      MaxUsers: Number,
+      CurrentUsers:Number,
+      Locale: String,
+      ActivityID: String,
+      Social: String,
+    ]
+    StatusCode:  200
+    Status:      String (a dizer que correu bem)
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+
+```
+# A organizar por secções novas (Guest Participant e Permission)
+
+### Remove a user from an event (/:eventID/:userID)
+
+Quando quer remover um utilizador de um evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:           String   (Formato: uuid),
+    Name:         String
 
 ```
 
