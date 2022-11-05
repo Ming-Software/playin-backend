@@ -270,7 +270,7 @@ GET:
 
 ```
 
-### Delete (/users/:eventID)
+### Delete (/events/:eventID)
 
 Quando quer remover um evento.
 
@@ -286,7 +286,7 @@ DELETE:
 
 ```
 
-### Update (/)
+### Update (/events/:eventID)
 
 Quando quer atualizar o utilizador.
 
