@@ -211,11 +211,42 @@ DELETE:
 
 ```
 
-## Event (/api)
+## Event (/api/event)
 
 Aqui estão os endpoints que remetem para ações de um evento. Para já, para poder realizar estas ações o utilizador tem de estar logado.
 
-### GET (/event/:eventID)
+### Create Event (/)
+
+Quando quer crear um evento.
+
+```
+POST:
+  REQUEST:
+      BODY: 
+        Name: String,
+        Description: String,
+        Start: String format("date-time") 'ex: 2000-10-3 12:00:00' ,
+        Finish: String format("date-time"),
+        Public: Boolean,
+        MaxUsers: Number,
+        CurrentUsers:Number,
+        Locale: String,
+        Activity: String,
+        Social: String,
+
+  RESPONSE:
+    StatusCode:  200
+    Status:     String (a dizer que correu bem)
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+    4. Devolve um erro se o user não existir
+
+```
+
+### GET (/:eventID)
 
 Quando quer obter algumas informações sobre um evento.
 
@@ -242,20 +273,7 @@ GET:
 
 ```
 
-### Remove a user from an event (/event/:eventID/:userID)
-
-Quando quer remover um utilizador de um evento.
-
-```
-DELETE:
-  RESPONSE:
-    StatusCode:  200
-    ID:           String   (Formato: uuid),
-    Name:         String
-
-```
-
-### GET Details (/events)
+### GET Details (/)
 
 Quando quer obter algumas informações sobre todos os eventos.
 
@@ -284,23 +302,7 @@ GET:
 
 ```
 
-### Delete (/users/:eventID)
-
-Quando quer remover um evento.
-
-```
-DELETE:
-  RESPONSE:
-    StatusCode:  200
-    Status:     String (a dizer que correu bem)
-
-  ERROS:
-    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
-    2. Devolve um erro se alguma coisa correr mal
-
-```
-
-### Update (/events/:eventID)
+### Update (/:eventID)
 
 Quando quer atualizar o utilizador.
 
@@ -340,6 +342,37 @@ PATCH:
     3. Devolve um erro se o evento não existir
 
 ```
+# A organizar por secções novas (Guest Participant e Permission)
+
+### Remove a user from an event (/:eventID/:userID)
+
+Quando quer remover um utilizador de um evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:           String   (Formato: uuid),
+    Name:         String
+
+```
+
+### Delete (/users/:eventID)
+
+Quando quer remover um evento.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    Status:     String (a dizer que correu bem)
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+
+```
+
 
 ### Remove an invite from an event (/event/invite/:eventID/:userID)
 
@@ -354,33 +387,4 @@ DELETE:
 
 ```
 
-### Create Event (/events)
 
-Quando quer crear um evento.
-
-```
-POST:
-  REQUEST:
-      BODY: 
-        Name: String,
-        Description: String,
-        Start: String format("date-time") 'ex: 2000-10-3 12:00:00' ,
-        Finish: String format("date-time"),
-        Public: Boolean,
-        MaxUsers: Number,
-        CurrentUsers:Number,
-        Locale: String,
-        Activity: String,
-        Social: String,
-
-  RESPONSE:
-    StatusCode:  200
-    Status:     String (a dizer que correu bem)
-
-  ERROS:
-    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
-    2. Devolve um erro se alguma coisa correr mal
-    3. Devolve um erro se o evento não existir
-    4. Devolve um erro se o user não existir
-
-```
