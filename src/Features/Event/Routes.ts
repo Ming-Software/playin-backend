@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { appendFileSync } from "fs";
 import {
   getEventsResponse,
   getEventResponse,
