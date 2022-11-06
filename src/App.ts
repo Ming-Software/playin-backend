@@ -7,7 +7,6 @@ import FastifyAuth from "@fastify/auth";
 import authRoutes from "./Features/Auth/Routes";
 import userRoutes from "./Features/User/Routes";
 import eventRoutes from "./Features/Event/Routes";
-import permissionRoutes from "./Features/EventPermission/Routes";
 
 import { verifyAccessJWT } from "./Decorators/JWT";
 import guestRoutes from "./Features/Guest/Routes";
