@@ -211,6 +211,27 @@ DELETE:
 
 ```
 
+### Get All Event Users (/event/:eventID)
+
+Quando quer todos os utilizadores de um evento.
+
+```
+GET:
+  RESPONSE:
+    StatusCode:  200
+    [
+    ID:           String   (Formato: uuid),
+    Name:         String,
+    Description:  String
+    ]
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+
+```
+
 ## Event (/api/event)
 
 Aqui estão os endpoints que remetem para ações de um evento. Para já, para poder realizar estas ações o utilizador tem de estar logado.
