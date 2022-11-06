@@ -5,20 +5,20 @@ import { sendPermissionController, removePermissionController, getEventPermissio
 
 const permissionRoutes = async (app: FastifyInstance) => {
   app.get(
-    "/permissions",
+    "/",
     { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getEventPermissionsResponse } } },
     getEventPermissions
   );
   // Send Permission to participate in an event
   app.post(
-    "/permissions/:eventID",
+    "/:eventID",
     { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getEventPermissionResponse } } },
     sendPermissionController
   );
 
   // Remove a permission sent from an event
   app.delete(
-    "/permissions/:eventID",
+    "/:eventID",
     { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: statusResponse } } },
     removePermissionController
   );

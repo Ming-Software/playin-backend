@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
-import { patchUserRequest } from "./Contracts";
-import { Static, Type } from "@sinclair/typebox";
+import { patchUserRequest, eventIdParams, pageQuery } from "./Contracts";
+import { Static } from "@sinclair/typebox";
+import { User } from ".prisma/client";
 import Activities from "../../Enums/Activities";
 
 // Get user Details
@@ -49,33 +50,23 @@ export const deleteUserController = async (req: FastifyRequest, res: FastifyRepl
 // Patch User
 export const patchUserController = async (req: FastifyRequest<{ Body: Static<typeof patchUserRequest> }>, res: FastifyReply) => {
   try {
-    let user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
-
-    if (!user) {
-      return res.status(500).send(new Error("Email does not exists"));
-    }
-
     if (req.body.Email) {
       const userMail = await prisma.user.findUnique({ where: { Email: req.body.Email } });
       if (userMail) {
         return res.status(500).send(new Error("Email already exists"));
-      } else {
-        user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Email: req.body.Email } });
       }
     }
+    // Update da tabela User
+    const user = await prisma.user.update({
+      data: {
+        Email: req.body.Email,
+        Description: req.body.Description,
+        Social: req.body.Social,
+      },
+      where: { ID: req.user.ID },
+    });
 
-    if (req.body.Name) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Name: req.body.Name } });
-    }
-
-    if (req.body.Description) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Description: req.body.Description } });
-    }
-
-    if (req.body.Social) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Social: req.body.Social } });
-    }
-
+    // Update da tabela Activity
     let activities = [];
     if (req.body.Activities) {
       await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } }); // Remove todos os elementos
@@ -102,12 +93,35 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
 };
 
 //getUsersPage
-export const getUsersPageController = async (req: FastifyRequest<{ Querystring: { page: number } }>, res: FastifyReply) => {
+export const getUsersPageController = async (req: FastifyRequest<{ Querystring: Static<typeof pageQuery> }>, res: FastifyReply) => {
   try {
     const usersPerPage = 30;
-    const user = await prisma.user.findMany({ skip: (req.query.page - 1) * usersPerPage, take: usersPerPage });
+    const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
 
     res.status(200).send(user);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+// get all event users
+export const getAllEventUsersController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
+  try {
+    let users: User[] = [];
+    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
+    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
+
+    const usersIDs = await prisma.eventParticipant.findMany({ where: { EventID: req.params.eventID } });
+    await Promise.all(
+      usersIDs.map(async function (userId) {
+        const user = await prisma.user.findUnique({ where: { ID: userId.UserID } });
+        if (user) {
+          users.push(user);
+        }
+      })
+    );
+
+    return res.status(200).send(users);
   } catch (error) {
     return res.status(500).send(error);
   }

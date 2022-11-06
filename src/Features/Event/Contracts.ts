@@ -22,7 +22,7 @@ export const statusEventResponse = Type.Object({
 // Get Event
 export const getEventsResponse = Type.Array(
   Type.Object({
-    ID: Type.String(),
+    ID: Type.String({ format: "uuid" }),
     Name: Type.String(),
     Description: Type.String(),
     Start: Type.String({ format: "date-time" }),
@@ -37,7 +37,7 @@ export const getEventsResponse = Type.Array(
 );
 
 export const getEventResponse = Type.Object({
-  ID: Type.String(),
+  ID: Type.String({ format: "uuid" }),
   Name: Type.String(),
   Description: Type.String(),
   Start: Type.String({ format: "date-time" }),
@@ -64,9 +64,34 @@ export const patchEventBody = Type.Object({
 });
 
 export const eventIdParams = Type.Object({
-  eventID: Type.String(),
+  eventID: Type.String({ format: "uuid" }),
 });
 
 export const userIdParams = Type.Object({
-  userID: Type.String(),
+  userID: Type.String({ format: "uuid" }),
 });
+
+export const userIdEventIdParams = Type.Object({
+  eventID: Type.String({ format: "uuid" }),
+  userID: Type.String({ format: "uuid" }),
+});
+
+export const getEventsPageQuery = Type.Object({
+  Page: Type.Number(),
+});
+
+export const getEventsPageResponse = Type.Array(
+  Type.Object({
+    ID: Type.String({ format: "uuid" }),
+    Name: Type.String(),
+    Description: Type.String(),
+    Start: Type.String({ format: "date-time" }),
+    Finish: Type.String({ format: "date-time" }),
+    Public: Type.Boolean(),
+    MaxUsers: Type.Number(),
+    CurrentUsers: Type.Number(),
+    Locale: Type.String(),
+    ActivityID: Type.String({ format: "uuid" }),
+    Social: Type.String(),
+  })
+);
