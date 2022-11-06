@@ -193,9 +193,9 @@ PATCH:
 
 ```
 
-### Get Users Page (/userspage/:page)
+### Get Users Page (/userspage?Page=x)
 
-Quando quer uma página com utilizadores.
+Quando quer uma página com utilizadores, x é o numero da página a ser exibida.
 
 ```
 DELETE:
