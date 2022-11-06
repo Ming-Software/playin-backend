@@ -50,33 +50,23 @@ export const deleteUserController = async (req: FastifyRequest, res: FastifyRepl
 // Patch User
 export const patchUserController = async (req: FastifyRequest<{ Body: Static<typeof patchUserRequest> }>, res: FastifyReply) => {
   try {
-    let user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
-
-    if (!user) {
-      return res.status(500).send(new Error("Email does not exists"));
-    }
-
     if (req.body.Email) {
       const userMail = await prisma.user.findUnique({ where: { Email: req.body.Email } });
       if (userMail) {
         return res.status(500).send(new Error("Email already exists"));
-      } else {
-        user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Email: req.body.Email } });
       }
     }
+    // Update da tabela User
+    const user = await prisma.user.update({
+      data: {
+        Email: req.body.Email,
+        Description: req.body.Description,
+        Social: req.body.Social,
+      },
+      where: { ID: req.user.ID },
+    });
 
-    if (req.body.Name) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Name: req.body.Name } });
-    }
-
-    if (req.body.Description) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Description: req.body.Description } });
-    }
-
-    if (req.body.Social) {
-      user = await prisma.user.update({ where: { ID: req.user.ID }, data: { Social: req.body.Social } });
-    }
-
+    // Update da tabela Activity
     let activities = [];
     if (req.body.Activities) {
       await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } }); // Remove todos os elementos
