@@ -238,7 +238,7 @@ Aqui estão os endpoints que remetem para ações de um evento. Para já, para p
 
 ### Create Event (/)
 
-Quando quer crear um evento.
+Quando quer criar um evento.
 
 ```
 POST:
@@ -330,7 +330,7 @@ Quando quer atualizar o utilizador.
 ```
 PATCH:
   REQUEST:
-      BODY: (Tudo campos optionais)
+      BODY: (Tudo campos opcionais)
         Name: String,
         Description: String,
         Start: String format("date-time"),
@@ -411,7 +411,101 @@ GET:
     2. Devolve um erro se alguma coisa correr mal
 
 ```
-# A organizar por secções novas (Guest Participant e Permission)
+
+## Guest (/api/guest)
+
+Endpoints que remetem para ações de convites.
+
+### Invite Users (/event/invites/:eventID)
+
+Enviar convite a vários utilizadores ao mesmo tempo.
+
+```
+POST:
+  REQUEST:
+      BODY: 
+      [
+      ID: String format("uuid"),
+      ]
+  RESPONSE:
+    StatusCode:  200
+    [
+    ID: String format("uuid"),
+    ]
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+```
+### Invite User (/event/invite/:eventID)
+
+Enviar convite a um utilizador.
+
+```
+POST:
+  REQUEST:
+      BODY:
+        ID: String format("uuid"),
+  RESPONSE:
+    StatusCode:  200
+    ID: String format("uuid"),
+  
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+    4. Devolve um erro se o utilizador não existir
+```
+
+### Remove an invite from an event (/event/invite/:eventID/:userID)
+
+Remover convite de um utilizador.
+
+```
+DELETE:
+  RESPONSE:
+    StatusCode:  200
+    ID:   String format("uuid"),
+    Name: String,
+    
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+    3. Devolve um erro se o evento não existir
+    4. Devolve um erro se o utilizador não existir
+```
+
+### User invitations (/user)
+
+Visualizar todos os convites do utilizador.
+
+```
+GET:
+  RESPONSE:
+    StatusCode:  200
+    [
+    ID: String format("uuid") ,
+    Name: String,
+    Description: String,
+    Start: String format("date-time"),
+    Finish: String format("date-time"),
+    Public: Boolean,
+    MaxUsers: Number,
+    CurrentUsers: Number,
+    Locale: String,
+    Activity: String,  (Nome da atividade)
+    Social: String,
+    ]
+
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
+```
+
+
+## Permission (/api/permission)
+
+Endpoints que remetem para ações de participante.
 
 ### Remove a user from an event (/:eventID/:userID)
 
@@ -423,21 +517,17 @@ DELETE:
     StatusCode:  200
     ID:           String   (Formato: uuid),
     Name:         String
+  
+  ERROS:
+    1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
+    2. Devolve um erro se alguma coisa correr mal
 
 ```
 
+## Participant (/api/participant)
 
-### Remove an invite from an event (/event/invite/:eventID/:userID)
 
-Remove o convite de participação no evento.
 
-```
-DELETE:
-  RESPONSE:
-    StatusCode:  200
-    ID:     String   (Formato: uuid)
-    NAME:   String
 
-```
 
 
