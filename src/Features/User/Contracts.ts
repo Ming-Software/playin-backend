@@ -25,7 +25,7 @@ export const deleteUserResponse = Type.Object({
 
 // patch user
 export const patchUserRequest = Type.Object({
-  Email: Type.Optional(Type.String()),
+  Email: Type.Optional(Type.String({ format: "email" })),
   Name: Type.Optional(Type.String()),
   Description: Type.Optional(Type.String()),
   Social: Type.Optional(Type.String()),
@@ -43,7 +43,7 @@ export const patchUserResponse = Type.Object({
 // Get Users with page query
 export const getUsersPageResponse = Type.Array(
   Type.Object({
-    ID: Type.String(),
+    ID: Type.String({ format: "uuid" }),
     Name: Type.String(),
     Description: Type.String(),
   })
@@ -56,12 +56,12 @@ export const pageQuery = Type.Object({
 // get all event users
 export const getAllEventUsers = Type.Array(
   Type.Object({
-    ID: Type.String(),
+    ID: Type.String({ format: "uuid" }),
     Name: Type.String(),
     Description: Type.String(),
   })
 );
 
 export const eventIdParams = Type.Object({
-  eventID: Type.String(),
+  eventID: Type.String({ format: "uuid" }),
 });

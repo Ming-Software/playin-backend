@@ -1,9 +1,9 @@
 import prisma from "../../Utils/Prisma";
-import { Static, Type } from "@sinclair/typebox";
+import { Static } from "@sinclair/typebox";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { userIdEventIdParams } from "../Event/Contracts";
 import { eventIdParams } from "../User/Contracts";
-import { getUserInvitationsResponse, inviteUserRequest, inviteUsersRequest } from "./Contracts";
+import { inviteUserRequest, inviteUsersRequest } from "./Contracts";
 
 // Invite Users
 export const inviteUsersController = async (

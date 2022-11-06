@@ -1,8 +1,8 @@
 import { Type } from "@sinclair/typebox";
 
 // Invite Users
-export const inviteUsersRequest = Type.Array(Type.String());
-export const inviteUsersResponse = Type.Array(Type.String());
+export const inviteUsersRequest = Type.Array(Type.Object({ ID: Type.String({ format: "uuid" }) }));
+export const inviteUsersResponse = Type.Array(Type.Object({ ID: Type.String({ format: "uuid" }) }));
 
 // Invite User
 export const inviteUserRequest = Type.Object({
