@@ -60,6 +60,7 @@ export const patchUserController = async (req: FastifyRequest<{ Body: Static<typ
     const user = await prisma.user.update({
       data: {
         Email: req.body.Email,
+        Name: req.body.Name,
         Description: req.body.Description,
         Social: req.body.Social,
       },
