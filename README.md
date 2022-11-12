@@ -504,6 +504,27 @@ GET:
 
 
 ## Permission (/api/permission)
+Endpoints que remetem para ações de permissões.
+
+## Accept a permission
+Aceitar um pedido para participar num evento de um utilizado
+```
+POST:
+  PARAMS: 
+    EventID: o ID do evento em que foi feito o pedido
+    UserID: o ID do user que pediu para participar
+  
+  RESPONSE:
+    Status: A dizer que o utilizador foi aceite
+    
+  ERROS:
+    1. A permissão não existe
+    2: O evento ou utilizador na permissão não existem
+    3. O utlizador que está a aceitar o pedido não é o dono do evento
+      
+```
+
+## Participant (/api/participant)
 
 Endpoints que remetem para ações de participante.
 
@@ -523,9 +544,6 @@ DELETE:
     2. Devolve um erro se alguma coisa correr mal
 
 ```
-
-## Participant (/api/participant)
-
 
 
 
