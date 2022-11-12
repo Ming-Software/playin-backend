@@ -506,7 +506,7 @@ GET:
 ## Permission (/api/permission)
 Endpoints que remetem para ações de permissões.
 
-## Accept a permission
+## Accept a permission (/:EventID/:UserID)
 Aceitar um pedido para participar num evento de um utilizado
 ```
 POST:
