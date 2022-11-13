@@ -11,15 +11,14 @@ export const inviteUsersController = async (
   res: FastifyReply
 ) => {
   try {
-    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
-    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
     let usersAddInvites: string[] = [];
     await Promise.all(
       req.body.map(async function (userId) {
-        const user = await prisma.user.findUnique({ where: { ID: userId } });
+        const user = await prisma.user.findUnique({ where: { ID: userId.ID } });
         if (user) {
-          await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: userId } });
-          usersAddInvites.push(userId);
+          await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: userId.ID } });
+          usersAddInvites.push(userId.ID);
         }
       })
     );
@@ -36,14 +35,9 @@ export const inviteUserController = async (
   res: FastifyReply
 ) => {
   try {
-    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
-    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
-    const user = await prisma.user.findUnique({ where: { ID: req.body.ID } });
-    if (user) {
-      await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: req.body.ID } });
-    } else {
-      return res.status(500).send(new Error("User doesn't exist"));
-    }
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    await prisma.user.findUniqueOrThrow({ where: { ID: req.body.ID } });
+    await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: req.body.ID } });
 
     return res.status(200).send(req.body.ID);
   } catch (error) {
@@ -57,11 +51,8 @@ export const removeInviteUsersController = async (
   res: FastifyReply
 ) => {
   try {
-    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
-    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
-
-    const user = await prisma.user.findUnique({ where: { ID: req.params.userID } });
-    if (!user) return res.status(500).send(new Error("User doesn't exist"));
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.params.userID } });
 
     await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.eventID, UserID: req.params.userID } } });
 

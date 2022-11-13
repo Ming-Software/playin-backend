@@ -20,13 +20,10 @@ export const getEventsController = async (req: FastifyRequest, res: FastifyReply
 
 export const getEventController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
-    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
-    if (event) {
-      const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
-      if (activity) {
-        return res.status(200).send({ ...event, Activity: activity.Name });
-      }
-    }
+    const event = await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    const activity = await prisma.activity.findUniqueOrThrow({ where: { ID: event.ActivityID } });
+
+    return res.status(200).send({ ...event, Activity: activity.Name });
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -35,23 +32,22 @@ export const getEventController = async (req: FastifyRequest<{ Params: Static<ty
 export const newEventController = async (req: FastifyRequest<{ Body: Static<typeof newEventBody> }>, res: FastifyReply) => {
   try {
     const activity = await prisma.activity.findUniqueOrThrow({ where: { Name: req.body.Activity } });
-    if (activity) {
-      await prisma.event.create({
-        data: {
-          Name: req.body.Name,
-          Description: req.body.Description,
-          Start: new Date(req.body.Start),
-          Locale: req.body.Locale,
-          Finish: new Date(req.body.Finish),
-          Public: req.body.Public,
-          MaxUsers: req.body.MaxUsers,
-          CurrentUsers: req.body.CurrentUsers,
-          UserID: req.user.ID,
-          ActivityID: activity.ID,
-          Social: req.body.Social,
-        },
-      });
-    }
+
+    await prisma.event.create({
+      data: {
+        Name: req.body.Name,
+        Description: req.body.Description,
+        Start: new Date(req.body.Start),
+        Locale: req.body.Locale,
+        Finish: new Date(req.body.Finish),
+        Public: req.body.Public,
+        MaxUsers: req.body.MaxUsers,
+        CurrentUsers: req.body.CurrentUsers,
+        UserID: req.user.ID,
+        ActivityID: activity.ID,
+        Social: req.body.Social,
+      },
+    });
 
     return res.status(200).send({ Status: "Event created with success" });
   } catch (error) {
@@ -101,12 +97,11 @@ export const patchEventController = async (
 export const deleteEventController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
     const event = await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
-    if (event) {
-      if (event.UserID == req.user.ID) {
-        await prisma.event.delete({ where: { ID: req.params.eventID } });
-        return res.status(200).send({ Status: "Event deleted with success" });
-      } else return res.status(500).send({ Status: "Permission Denied" });
-    }
+
+    if (event.UserID == req.user.ID) {
+      await prisma.event.delete({ where: { ID: req.params.eventID } });
+      return res.status(200).send({ Status: "Event deleted with success" });
+    } else return res.status(500).send({ Status: "Permission Denied" });
   } catch (error) {
     return res.status(500).send(error);
   }
