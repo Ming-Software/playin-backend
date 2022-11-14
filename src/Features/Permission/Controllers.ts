@@ -15,7 +15,7 @@ export const getEventPermissions = async (req: FastifyRequest, res: FastifyReply
 
 export const sendPermissionController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
     const permission = await prisma.eventPermission.create({ data: { EventID: req.params.eventID, UserID: req.user.ID } });
 
     return res.status(200).send(permission);
@@ -26,9 +26,7 @@ export const sendPermissionController = async (req: FastifyRequest<{ Params: Sta
 
 export const removePermissionController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
-    const eventPermission = await prisma.eventPermission.findUniqueOrThrow({
-      where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.eventID } },
-    });
+    await prisma.eventPermission.findUniqueOrThrow({ where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.eventID } } }); // Verifica se o eventPermission existe
 
     await prisma.eventPermission.delete({ where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.eventID } } });
 

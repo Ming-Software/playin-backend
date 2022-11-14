@@ -109,7 +109,7 @@ export const getUsersPageController = async (req: FastifyRequest<{ Querystring: 
 export const getAllEventUsersController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
     let users: User[] = [];
-    const event = await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se evento existe
 
     const usersIDs = await prisma.eventParticipant.findMany({ where: { EventID: req.params.eventID } });
     await Promise.all(

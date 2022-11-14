@@ -11,7 +11,7 @@ export const inviteUsersController = async (
   res: FastifyReply
 ) => {
   try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
     let usersAddInvites: string[] = [];
     await Promise.all(
       req.body.map(async function (userId) {
@@ -35,9 +35,9 @@ export const inviteUserController = async (
   res: FastifyReply
 ) => {
   try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
-    await prisma.user.findUniqueOrThrow({ where: { ID: req.body.ID } });
-    await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: req.body.ID } });
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
+    await prisma.user.findUniqueOrThrow({ where: { ID: req.body.ID } }); // Verifica se o user existe
+    await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: req.body.ID } }); // Cria o event guest
 
     return res.status(200).send(req.body.ID);
   } catch (error) {
@@ -51,8 +51,8 @@ export const removeInviteUsersController = async (
   res: FastifyReply
 ) => {
   try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
-    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.params.userID } });
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
+    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.params.userID } }); // Verifica se o user existe
 
     await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.eventID, UserID: req.params.userID } } });
 
