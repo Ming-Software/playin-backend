@@ -8,7 +8,7 @@ import Activities from "../../Enums/Activities";
 // Get user Details
 export const getUserDetailsController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.user.ID } });
     const userActivities = await prisma.userActivity.findMany({ where: { UserID: req.user.ID } });
 
     const activities = await Promise.all(
@@ -27,7 +27,7 @@ export const getUserDetailsController = async (req: FastifyRequest, res: Fastify
 // Get user
 export const getUserController = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const user = await prisma.user.findUnique({ where: { ID: req.user.ID } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.user.ID } });
 
     res.status(200).send({ ...user });
   } catch (error) {
@@ -109,8 +109,7 @@ export const getUsersPageController = async (req: FastifyRequest<{ Querystring: 
 export const getAllEventUsersController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
   try {
     let users: User[] = [];
-    const event = await prisma.event.findUnique({ where: { ID: req.params.eventID } });
-    if (!event) return res.status(500).send(new Error("Event doesn't exist"));
+    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se evento existe
 
     const usersIDs = await prisma.eventParticipant.findMany({ where: { EventID: req.params.eventID } });
     await Promise.all(
