@@ -47,20 +47,12 @@ export const acceptPermissionController = async (
 ) => {
   try {
     // We get the permission we want to accept
-    const eventPermission = await prisma.eventPermission.findUnique({
+    const eventPermission = await prisma.eventPermission.findUniqueOrThrow({
       where: { UserID_EventID: { UserID: req.params.UserID, EventID: req.params.EventID } },
     });
-    if (!eventPermission) {
-      return res.status(500).send(new Error("Permission does not exist"));
-    }
-
     // We get both the event and the user
-    const user = await prisma.user.findUnique({ where: { ID: eventPermission.UserID } });
-    const event = await prisma.event.findUnique({ where: { ID: eventPermission.UserID } });
-    if (!event || !user) {
-      return res.status(500).send(new Error("Event or user does not exist"));
-    }
-
+    const user = await prisma.user.findUniqueOrThrow({ where: { ID: eventPermission.UserID } });
+    const event = await prisma.event.findUniqueOrThrow({ where: { ID: eventPermission.UserID } });
     // We must make sure that the user about to accept the request is the one that owns the event
     if (event.UserID !== req.user.ID) {
       return res.status(500).send(new Error("User does not onw the event"));
