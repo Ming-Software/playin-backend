@@ -111,7 +111,7 @@ export const GetUsersPageSchema = {
 // Get a Page of Users Details
 export const GetUsersDetailsPageSchema = {
 	tags: ["User"],
-	description: "Returns a page of 30 users, each user a more detailed description",
+	description: "Returns a page of 30 users, each user with a more detailed description",
 	querystring: Type.Object({
 		Page: Type.Number(),
 	}),

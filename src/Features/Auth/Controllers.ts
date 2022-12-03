@@ -6,7 +6,10 @@ import * as Contracts from "./Contracts";
 import Activities from "../../Enums/Activities";
 
 // Register a New User
-export const registerController = async (req: FastifyRequest<{ Body: typeof Contracts.RegisterSchema.body.static }>, res: FastifyReply) => {
+export const registerController = async (
+	req: FastifyRequest<{ Body: typeof Contracts.RegisterSchema.body.static }>,
+	res: FastifyReply,
+) => {
 	try {
 		// We check to see if the email is unique
 		const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });
@@ -15,12 +18,7 @@ export const registerController = async (req: FastifyRequest<{ Body: typeof Cont
 		// We now hash the password and store the user
 		const hash = await Hashing.hashPassword(req.body.Password);
 		const newUser = await prisma.user.create({
-			data: {
-				Email: req.body.Email,
-				Password: hash,
-				Name: req.body.Name,
-				Social: req.body.Social,
-			},
+			data: { Email: req.body.Email, Password: hash, Name: req.body.Name, Social: req.body.Social },
 		});
 
 		// We connect the user to the activities he shows interest to
@@ -46,7 +44,10 @@ export const registerController = async (req: FastifyRequest<{ Body: typeof Cont
 };
 
 // Login a User
-export const loginController = async (req: FastifyRequest<{ Body: typeof Contracts.LoginSchema.body.static }>, res: FastifyReply) => {
+export const loginController = async (
+	req: FastifyRequest<{ Body: typeof Contracts.LoginSchema.body.static }>,
+	res: FastifyReply,
+) => {
 	try {
 		// We check to see if the email exists
 		const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });

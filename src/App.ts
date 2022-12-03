@@ -26,9 +26,15 @@ const buildApp = async () => {
 
 	// Plugins
 	await app.register(FastifyAuth);
-	await app.register(FastifyJWT, { secret: String(process.env.ACCESS_SECRET), cookie: { cookieName: "RefreshToken", signed: true } });
 	await app.register(FastifyCookie, { secret: process.env.REFRESH_SECRET });
-	await app.register(FastifyCORS, { origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://playin.netlify.app"], credentials: true });
+	await app.register(FastifyJWT, {
+		secret: String(process.env.ACCESS_SECRET),
+		cookie: { cookieName: "RefreshToken", signed: true },
+	});
+	await app.register(FastifyCORS, {
+		origin: ["http://localhost:5173", "http://127.0.0.1:5173", "https://playin.netlify.app"],
+		credentials: true,
+	});
 	app.after(() => console.log("PLUGINS -------> LOADED"));
 
 	// Decorators
