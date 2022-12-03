@@ -6,10 +6,15 @@ import { hashPassword, checkPassword } from "../../Utils/Hashing";
 import { loginBody, registerBody } from "./Contracts";
 import Activities from "../../Enums/Activities";
 
-export const registerController = async (req: FastifyRequest<{ Body: Static<typeof registerBody> }>, res: FastifyReply) => {
+export const registerController = async (
+  req: FastifyRequest<{ Body: Static<typeof registerBody> }>,
+  res: FastifyReply
+) => {
   try {
     // We check to see if the email is unique
-    const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });
+    const user = await prisma.user.findUnique({
+      where: { Email: req.body.Email },
+    });
     if (user) {
       return res.status(500).send(new Error("Email already exists"));
     }
@@ -25,13 +30,22 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
     });
     // We connect the user to the activities he shows interest to
     for (let Name of req.body.Activities) {
-      const activity = await prisma.activity.findUnique({ where: { Name: Name } });
+      const activity = await prisma.activity.findUnique({
+        where: { Name: Name },
+      });
       // If the activity exists
       if (activity) {
-        await prisma.userActivity.create({ data: { UserID: newUser.ID, ActivityID: activity.ID } });
+        await prisma.userActivity.create({
+          data: { UserID: newUser.ID, ActivityID: activity.ID },
+        });
         // IF None was chosen with any other activities, None will be ignored
-        if (activity.Name === Activities.NONE && req.body.Activities.length > 1) {
-          await prisma.userActivity.deleteMany({ where: { NOT: { ActivityID: activity.ID } } });
+        if (
+          activity.Name === Activities.NONE &&
+          req.body.Activities.length > 1
+        ) {
+          await prisma.userActivity.deleteMany({
+            where: { NOT: { ActivityID: activity.ID } },
+          });
           break;
         }
       }
@@ -42,10 +56,15 @@ export const registerController = async (req: FastifyRequest<{ Body: Static<type
   }
 };
 
-export const loginController = async (req: FastifyRequest<{ Body: Static<typeof loginBody> }>, res: FastifyReply) => {
+export const loginController = async (
+  req: FastifyRequest<{ Body: Static<typeof loginBody> }>,
+  res: FastifyReply
+) => {
   try {
     // We check to see if the email exists
-    const user = await prisma.user.findUnique({ where: { Email: req.body.Email } });
+    const user = await prisma.user.findUnique({
+      where: { Email: req.body.Email },
+    });
     if (!user) {
       return res.status(500).send(new Error("Email does not exists"));
     }
@@ -61,7 +80,13 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
     const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
 
     // We create a cookie with the refreshToken (secure MUST be true for production)
-    res.setCookie("RefreshToken", refreshToken, { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
+    res.setCookie("RefreshToken", refreshToken, {
+      path: "/",
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      signed: true,
+    });
 
     return res.status(200).send({ AccessToken: accessToken });
   } catch (error) {
@@ -69,10 +94,19 @@ export const loginController = async (req: FastifyRequest<{ Body: Static<typeof 
   }
 };
 
-export const logoutController = async (req: FastifyRequest, res: FastifyReply) => {
+export const logoutController = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
   try {
     // We just need to clear the refreshToken from the cookies
-    res.clearCookie("RefreshToken", { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true });
+    res.clearCookie("RefreshToken", {
+      path: "/",
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      signed: true,
+    });
     return res.status(200).send({ Status: "Logout was successful" });
   } catch (error) {
     return res.status(500).send(error);
@@ -80,7 +114,10 @@ export const logoutController = async (req: FastifyRequest, res: FastifyReply) =
 };
 
 // We use the refreshToken to generate a new accessToken
-export const refreshController = async (req: FastifyRequest, res: FastifyReply) => {
+export const refreshController = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
   try {
     const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
     const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10m" });
@@ -92,7 +129,10 @@ export const refreshController = async (req: FastifyRequest, res: FastifyReply) 
 };
 
 // We use the refreshToken to generate a new accessToken
-export const addActivity = async (req: FastifyRequest<{ Body: { Name: string } }>, res: FastifyReply) => {
+export const addActivity = async (
+  req: FastifyRequest<{ Body: { Name: string } }>,
+  res: FastifyReply
+) => {
   try {
     const act = await prisma.activity.create({ data: { Name: req.body.Name } });
 

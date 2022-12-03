@@ -91,7 +91,8 @@ export const getEventsPageResponse = Type.Array(
     MaxUsers: Type.Number(),
     CurrentUsers: Type.Number(),
     Locale: Type.String(),
-    ActivityID: Type.String({ format: "uuid" }),
+    Activity: Type.String(),
+    Creator: Type.String(),
     Social: Type.String(),
   })
 );
