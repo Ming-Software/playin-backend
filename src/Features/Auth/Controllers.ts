@@ -37,7 +37,7 @@ export const registerController = async (
 			}
 		}
 
-		return res.status(200).send({ Status: "OK" });
+		return res.status(200).send({});
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
@@ -79,7 +79,7 @@ export const logoutController = async (_req: FastifyRequest, res: FastifyReply) 
 		return res
 			.clearCookie("RefreshToken", { path: "/", secure: true, httpOnly: true, sameSite: "none", signed: true })
 			.status(200)
-			.send({ Status: "OK" });
+			.send({});
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}

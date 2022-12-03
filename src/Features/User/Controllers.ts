@@ -114,7 +114,11 @@ export const getUsersPageController = async (
 		const usersPerPage = 30;
 
 		// We get the page from the db and the total amount of users existing
-		const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
+		const user = await prisma.user.findMany({
+			skip: (req.query.Page - 1) * usersPerPage,
+			take: usersPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
 		const total = await prisma.user.count();
 
 		return res.status(200).send({ Users: user, Total: total });
@@ -132,7 +136,11 @@ export const getUsersPageDetailsController = async (
 		const usersPerPage = 30;
 
 		// We get the page from the db and the total amount of users existing
-		const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
+		const user = await prisma.user.findMany({
+			skip: (req.query.Page - 1) * usersPerPage,
+			take: usersPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
 		const total = await prisma.user.count();
 
 		// We now get the activities

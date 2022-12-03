@@ -34,7 +34,7 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.deleteSignedInUserController,
 	);
 
-	// patch
+	// Update Signed In User
 	app.patch(
 		"/",
 		{
@@ -44,7 +44,7 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.patchUserController,
 	);
 
-	// getUsersPage
+	// Get a Page of All the Users with minimal information
 	app.get(
 		"/userspage",
 		{
@@ -54,6 +54,7 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.getUsersPageController,
 	);
 
+	// Get a Page of All the Users with detailed information
 	app.get(
 		"/userspage/details",
 		{

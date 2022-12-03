@@ -1,98 +1,218 @@
 import { Type } from "@sinclair/typebox";
+
 import EventStatus from "../../Enums/Event";
 
-// New Event
-export const newEventBody = Type.Object({
-	Name: Type.String(),
-	Description: Type.String(),
-	Start: Type.String({ format: "date-time" }),
-	Finish: Type.String({ format: "date-time" }),
-	Public: Type.Boolean({ default: EventStatus.PUBLIC }),
-	MaxUsers: Type.Number(),
-	CurrentUsers: Type.Number({ default: 1 }),
-	Locale: Type.String(),
-	Activity: Type.String(),
-	Social: Type.String(),
-});
-
-export const statusEventResponse = Type.Object({
-	Status: Type.String({ default: "OK" }),
-});
-
-// Get Event
-export const getEventsResponse = Type.Array(
-	Type.Object({
-		ID: Type.String({ format: "uuid" }),
+// New Event Schema
+export const NewEventSchema = {
+	tags: ["Event"],
+	description: "Creates a new event",
+	body: Type.Object({
 		Name: Type.String(),
 		Description: Type.String(),
+		Public: Type.Boolean({ default: EventStatus.PUBLIC }),
 		Start: Type.String({ format: "date-time" }),
 		Finish: Type.String({ format: "date-time" }),
-		Public: Type.Boolean(),
-		MaxUsers: Type.Number(),
-		CurrentUsers: Type.Number(),
 		Locale: Type.String(),
-		Activity: Type.String(),
-		Social: Type.String(),
-	}),
-);
-
-export const getEventResponse = Type.Object({
-	ID: Type.String({ format: "uuid" }),
-	Name: Type.String(),
-	Description: Type.String(),
-	Start: Type.String({ format: "date-time" }),
-	Finish: Type.String({ format: "date-time" }),
-	Public: Type.Boolean(),
-	MaxUsers: Type.Number(),
-	CurrentUsers: Type.Number(),
-	Locale: Type.String(),
-	ActivityID: Type.String(),
-	Social: Type.String(),
-});
-
-export const patchEventBody = Type.Object({
-	Name: Type.Optional(Type.String()),
-	Description: Type.Optional(Type.String()),
-	Start: Type.Optional(Type.String({ format: "date-time" })),
-	Finish: Type.Optional(Type.String({ format: "date-time" })),
-	Public: Type.Optional(Type.Boolean({ default: EventStatus.PUBLIC })),
-	MaxUsers: Type.Optional(Type.Number()),
-	CurrentUsers: Type.Optional(Type.Number({ default: 1 })),
-	Locale: Type.Optional(Type.String()),
-	Activity: Type.Optional(Type.String()),
-	Social: Type.Optional(Type.String()),
-});
-
-export const eventIdParams = Type.Object({
-	eventID: Type.String({ format: "uuid" }),
-});
-
-export const userIdParams = Type.Object({
-	userID: Type.String({ format: "uuid" }),
-});
-
-export const userIdEventIdParams = Type.Object({
-	eventID: Type.String({ format: "uuid" }),
-	userID: Type.String({ format: "uuid" }),
-});
-
-export const getEventsPageQuery = Type.Object({
-	Page: Type.Number(),
-});
-
-export const getEventsPageResponse = Type.Array(
-	Type.Object({
-		ID: Type.String({ format: "uuid" }),
-		Name: Type.String(),
-		Description: Type.String(),
-		Start: Type.String({ format: "date-time" }),
-		Finish: Type.String({ format: "date-time" }),
-		Public: Type.Boolean(),
 		MaxUsers: Type.Number(),
-		CurrentUsers: Type.Number(),
-		Locale: Type.String(),
-		Activity: Type.String(),
-		Creator: Type.String(),
+		CurrentUsers: Type.Number({ default: 1 }),
 		Social: Type.String(),
+		Activity: Type.String(),
 	}),
-);
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Get One Event Schema
+export const GetEventSchema = {
+	tags: ["Event"],
+	description: "Returns a specific event given an ID",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			ID: Type.String({ format: "uuid" }),
+			Name: Type.String(),
+			Description: Type.String(),
+			Public: Type.Boolean(),
+			Start: Type.String({ format: "date-time" }),
+			Finish: Type.String({ format: "date-time" }),
+			Locale: Type.String(),
+			MaxUsers: Type.Number(),
+			CurrentUsers: Type.Number(),
+			Social: Type.String(),
+			Activity: Type.String(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Delete Event Schema
+export const DeleteEventSchema = {
+	tags: ["Event"],
+	description: "Deletes a specific event given an ID. You must be logged as the event creator",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Update Event Schema
+export const UpdateEventSchema = {
+	tags: ["Event"],
+	description: "Updates a specific event given an ID. You must be logged as the event creator",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	body: Type.Object({
+		Name: Type.Optional(Type.String()),
+		Description: Type.Optional(Type.String()),
+		Public: Type.Optional(Type.Boolean({ default: EventStatus.PUBLIC })),
+		Start: Type.Optional(Type.String({ format: "date-time" })),
+		Finish: Type.Optional(Type.String({ format: "date-time" })),
+		Locale: Type.Optional(Type.String()),
+		MaxUsers: Type.Optional(Type.Number()),
+		CurrentUsers: Type.Optional(Type.Number({ default: 1 })),
+		Social: Type.Optional(Type.String()),
+		Activity: Type.Optional(Type.String()),
+	}),
+	response: {
+		200: Type.Object({
+			Name: Type.String(),
+			Description: Type.String(),
+			Public: Type.Boolean(),
+			Start: Type.String({ format: "date-time" }),
+			Finish: Type.String({ format: "date-time" }),
+			Locale: Type.String(),
+			MaxUsers: Type.Number(),
+			CurrentUsers: Type.Number(),
+			Social: Type.String(),
+			Activity: Type.String(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Get One Page of All Events
+export const GetEventsPageSchema = {
+	tags: ["Event"],
+	description: "Returns a page of all events",
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Events: Type.Array(
+				Type.Object({
+					Name: Type.String(),
+					Description: Type.String(),
+					Public: Type.Boolean(),
+					Start: Type.String({ format: "date-time" }),
+					Finish: Type.String({ format: "date-time" }),
+					Locale: Type.String(),
+					MaxUsers: Type.Number(),
+					CurrentUsers: Type.Number(),
+					Social: Type.String(),
+					Activity: Type.String(),
+					Creator: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Get One Page of Events Created by One User Schema
+export const GetEventsByUserPageSchema = {
+	tags: ["Event"],
+	description: "Returns a page of events created by one user",
+	params: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Events: Type.Array(
+				Type.Object({
+					Name: Type.String(),
+					Description: Type.String(),
+					Public: Type.Boolean(),
+					Start: Type.String({ format: "date-time" }),
+					Finish: Type.String({ format: "date-time" }),
+					Locale: Type.String(),
+					MaxUsers: Type.Number(),
+					CurrentUsers: Type.Number(),
+					Social: Type.String(),
+					Activity: Type.String(),
+					Creator: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// export const userIdParams = Type.Object({
+// 	userID: Type.String({ format: "uuid" }),
+// });
+
+// export const userIdEventIdParams = Type.Object({
+// 	eventID: Type.String({ format: "uuid" }),
+// 	userID: Type.String({ format: "uuid" }),
+// });
+
+// export const getEventsPageQuery = Type.Object({
+// 	Page: Type.Number(),
+// });
+
+// export const getEventsPageResponse = Type.Array(
+// 	Type.Object({
+// 		ID: Type.String({ format: "uuid" }),
+// 		Name: Type.String(),
+// 		Description: Type.String(),
+// 		Start: Type.String({ format: "date-time" }),
+// 		Finish: Type.String({ format: "date-time" }),
+// 		Public: Type.Boolean(),
+// 		MaxUsers: Type.Number(),
+// 		CurrentUsers: Type.Number(),
+// 		Locale: Type.String(),
+// 		Activity: Type.String(),
+// 		Creator: Type.String(),
+// 		Social: Type.String(),
+// 	}),
+// );
