@@ -76,14 +76,8 @@ export const loginController = async (
 
     // We create the accessToken (expires in 10 minutes) and the refreshToken (expires in 1 week)
     // To test this out on the frontend for the time being we will have 10 seconds for access and 20 seconds for refresh
-    const accessToken = await res.jwtSign(
-      { ID: user.ID },
-      { expiresIn: "15m" }
-    );
-    const refreshToken = await res.jwtSign(
-      { ID: user.ID },
-      { expiresIn: "7d" }
-    );
+    const accessToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "10m" });
+    const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
 
     // We create a cookie with the refreshToken (secure MUST be true for production)
     res.setCookie("RefreshToken", refreshToken, {
@@ -126,10 +120,7 @@ export const refreshController = async (
 ) => {
   try {
     const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
-    const accessToken = await res.jwtSign(
-      { ID: decoded.ID },
-      { expiresIn: "15m" }
-    );
+    const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10m" });
 
     return res.status(200).send({ AccessToken: accessToken });
   } catch (error) {
