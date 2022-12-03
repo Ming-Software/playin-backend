@@ -1,28 +1,27 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  CreatedAt   DateTime @default(now())
-  ID          String   @id @default(uuid())
-  Email       String   @unique
-  Password    String
+  CreatedAt DateTime @default(now())
+  Admin     Boolean  @default(false)
+
+  ID          String @id @default(uuid())
+  Email       String @unique
   Name        String
-  Description String   @default("")
+  Password    String
+  Description String @default("")
+  Social      String @default("None") // None || Competitivo || Casual
 
-  Admin      Boolean        @default(false)
-  Social     String         @default("None") // None || Competitivo || Casual
-  Activities UserActivity[]
-
+  Activities       UserActivity[]
   Event            Event[]
   Message          Message[]
   EventGuest       EventGuest[]
@@ -31,27 +30,28 @@ model User {
 }
 
 model Event {
-  CreatedAt   DateTime @default(now())
-  ID          String   @id @default(uuid())
+  CreatedAt DateTime @default(now())
+
+  ID          String @id @default(uuid())
   Name        String
   Description String
-  Start       DateTime
-  Finish      DateTime
-  Locale      String
+
+  Start  DateTime
+  Finish DateTime
+  Locale String
 
   Public       Boolean @default(true)
   MaxUsers     Int
   CurrentUsers Int
 
   Social     String   @default("None") // None || Competitivo || Casual
-  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
   ActivityID String
+  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
 
-  User   User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID String
+  User   User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
 
-  Message Message[]
-
+  Message          Message[]
   EventGuest       EventGuest[]
   EventParticipant EventParticipant[]
   EventPermission  EventPermission[]
@@ -59,19 +59,21 @@ model Event {
 
 model Message {
   CreatedAt DateTime @default(now())
-  ID        String   @id @default(uuid())
-  Text      String
 
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  ID   String @id @default(uuid())
+  Text String
+
   UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 }
 
 model Activity {
   CreatedAt DateTime @default(now())
-  ID        String   @id @default(uuid())
-  Name      String   @unique // None || Futebol || Futsal || Voleibol || Padel || Tenis
+
+  ID   String @id @default(uuid())
+  Name String @unique // None || Futebol || Futsal || Voleibol || Padel || Tenis
 
   Event Event[]
   User  UserActivity[]
@@ -80,39 +82,39 @@ model Activity {
 // Many to Many
 // Alguem que foi convidado
 model EventGuest {
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
 }
 
 // Alguem que vai participar
 model EventParticipant {
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
 }
 
 // Alguem que pede para participar
 model EventPermission {
-  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID  String
-  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+  User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
+  Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
 }
 
 model UserActivity {
-  User       User     @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   UserID     String
-  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
+  User       User     @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   ActivityID String
+  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, ActivityID])
 }

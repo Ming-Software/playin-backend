@@ -1,0 +1,65 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"env": {
+		// Env Rules (React)
+		// "browser": true,
+		// "es2020": true
+
+		// Env Rules (Node)
+		"browser": false,
+		"es2020": true
+	},
+	"extends": [
+		// Extends (React)
+		// "eslint:recommended",
+		// "plugin:react/recommended",
+		// "plugin:@typescript-eslint/recommended",
+		// "plugin:prettier/recommended"
+
+		// Extends (Node)
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended"
+	],
+	"parserOptions": {
+		// Parser Options (React)
+		// "ecmaVersion": "latest",
+		// "sourceType": "module",
+		// "project": ["./tsconfig.json", "./tsconfig.node.json"]
+
+		// Parser Options (Node)
+		"ecmaVersion": "latest",
+		"sourceType": "module",
+		"project": ["./tsconfig.json"]
+	},
+	"plugins": [
+		// Plugins (React)
+		// "react",
+		// "@typescript-eslint",
+		// "prettier"
+
+		// Plugins (Node)
+		"@typescript-eslint",
+		"prettier"
+	],
+	"rules": {
+		// Linting Rules (React)
+		// "react/react-in-jsx-scope": "off",
+		// "@typescript-eslint/explicit-function-return-type": "off",
+		// "@typescript-eslint/explicit-module-boundary-types": "off",
+		// "@typescript-eslint/no-explicit-any": "off",
+		// "@typescript-eslint/no-floating-promises": "error",
+		// "@typescript-eslint/await-thenable": "error",
+		// "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": { "arguments": false, "attributes": false } }],
+		// "@typescript-eslint/consistent-type-definitions": ["error", "interface"]
+
+		// Linting Rules (Node)
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-floating-promises": "error",
+		"@typescript-eslint/await-thenable": "error",
+		"@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": { "arguments": false, "attributes": false } }],
+		"@typescript-eslint/consistent-type-definitions": ["error", "interface"]
+	}
+}

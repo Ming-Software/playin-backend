@@ -1,35 +1,41 @@
 {
-  "name": "playin-backend",
-  "version": "1.0.0",
-  "description": "Fastify Prisma Typescript backend",
-  "main": "main.ts",
-  "repository": "git@github.com:Ming-Software/playin-backend.git",
-  "author": "Ming Software",
-  "license": "MIT",
-  "private": false,
-  "scripts": {
-    "dev": "tsnd --respawn --transpile-only --exit-child src/main.ts"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
-    "@types/node": "^18.11.3",
-    "prisma": "^4.5.0",
-    "ts-node": "^10.9.1",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "@fastify/auth": "^4.1.0",
-    "@fastify/cookie": "^8.3.0",
-    "@fastify/cors": "^8.1.0",
-    "@fastify/jwt": "^6.3.2",
-    "@prisma/client": "^4.5.0",
-    "@sinclair/typebox": "^0.24.48",
-    "bcrypt": "^5.1.0",
-    "dotenv": "^16.0.3",
-    "fastify": "^4.9.2"
-  },
-  "engines": {
-    "node": ">=16.0.0 <17.0.0"
-  }
+	"name": "playin-backend",
+	"author": "Ming Software",
+	"repository": "git@github.com:Ming-Software/playin-backend.git",
+	"description": "Fastify Prisma Typescript backend",
+	"license": "MIT",
+	"private": false,
+	"main": "main.ts",
+	"scripts": {
+		"dev": "tsnd --respawn --transpile-only --exit-child src/main.ts"
+	},
+	"dependencies": {
+		"@fastify/auth": "^4.1.0",
+		"@fastify/cookie": "^8.3.0",
+		"@fastify/cors": "^8.2.0",
+		"@fastify/jwt": "^6.3.3",
+		"@prisma/client": "^4.5.0",
+		"@sinclair/typebox": "^0.24.48",
+		"bcrypt": "^5.1.0",
+		"dotenv": "^16.0.3",
+		"fastify": "^4.9.2"
+	},
+	"devDependencies": {
+		"@fastify/swagger": "^8.2.0",
+		"@fastify/swagger-ui": "^1.3.0",
+		"@types/bcrypt": "^5.0.0",
+		"@types/node": "^18.11.9",
+		"@typescript-eslint/eslint-plugin": "^5.44.0",
+		"@typescript-eslint/parser": "^5.44.0",
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"prettier": "^2.8.0",
+		"prisma": "^4.5.0",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^4.9.3"
+	},
+	"engines": {
+		"node": ">=16.0.0 <17.0.0"
+	}
 }
