@@ -58,8 +58,8 @@ export const loginController = async (req: FastifyRequest<{ Body: typeof Contrac
 
 		// We create the accessToken (expires in 10 minutes) and the refreshToken (expires in 1 week)
 		// To test this out on the frontend for the time being we will have 10 seconds for access and 20 seconds for refresh
-		const accessToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "10s" });
-		const refreshToken = await res.jwtSign({ ID: user.ID }, { expiresIn: "1w" });
+		const accessToken = await res.jwtSign({ ID: user.ID, Name: user.Name }, { expiresIn: "10m" });
+		const refreshToken = await res.jwtSign({ ID: user.ID, Name: user.Name }, { expiresIn: "1w" });
 
 		// We create a cookie with the refreshToken (secure MUST be true for production)
 		return res
@@ -87,8 +87,9 @@ export const logoutController = async (_req: FastifyRequest, res: FastifyReply) 
 // Generate new AccessToken using RefreshToken
 export const refreshController = async (req: FastifyRequest, res: FastifyReply) => {
 	try {
-		const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
-		const accessToken = await res.jwtSign({ ID: decoded.ID }, { expiresIn: "10m" });
+		// We verify the RefreshToken and if valid create a new AccessToken
+		const decoded: { ID: string; Name: string } = await req.jwtVerify({ onlyCookie: true });
+		const accessToken = await res.jwtSign({ ID: decoded.ID, Name: decoded.Name }, { expiresIn: "10m" });
 
 		return res.status(200).send({ AccessToken: accessToken });
 	} catch (error) {
