@@ -187,7 +187,9 @@ export const getEventsPageController = async (
         ...item,
       });
     }
-    res.status(200).send(allEvents);
+
+    const total = await prisma.event.count();
+    res.status(200).send({ Events: allEvents, Total: total });
   } catch (error) {
     return res.status(500).send(error);
   }

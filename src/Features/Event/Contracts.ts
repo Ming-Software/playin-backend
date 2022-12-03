@@ -80,19 +80,22 @@ export const getEventsPageQuery = Type.Object({
   Page: Type.Number(),
 });
 
-export const getEventsPageResponse = Type.Array(
-  Type.Object({
-    ID: Type.String({ format: "uuid" }),
-    Name: Type.String(),
-    Description: Type.String(),
-    Start: Type.String({ format: "date-time" }),
-    Finish: Type.String({ format: "date-time" }),
-    Public: Type.Boolean(),
-    MaxUsers: Type.Number(),
-    CurrentUsers: Type.Number(),
-    Locale: Type.String(),
-    Activity: Type.String(),
-    Creator: Type.String(),
-    Social: Type.String(),
-  })
-);
+export const getEventsPageResponse = Type.Object({
+  Events: Type.Array(
+    Type.Object({
+      ID: Type.String({ format: "uuid" }),
+      Name: Type.String(),
+      Description: Type.String(),
+      Start: Type.String({ format: "date-time" }),
+      Finish: Type.String({ format: "date-time" }),
+      Public: Type.Boolean(),
+      MaxUsers: Type.Number(),
+      CurrentUsers: Type.Number(),
+      Locale: Type.String(),
+      Activity: Type.String(),
+      Creator: Type.String(),
+      Social: Type.String(),
+    })
+  ),
+  Total: Type.Number(),
+});
