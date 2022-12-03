@@ -111,10 +111,13 @@ model EventPermission {
 }
 
 model UserActivity {
-  UserID     String
-  User       User     @relation(fields: [UserID], references: [ID], onDelete: Cascade)
-  ActivityID String
-  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
+  UserID   String
+  UserName String
+  User     User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+
+  ActivityID   String
+  ActivityName String
+  Activity     Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, ActivityID])
 }
