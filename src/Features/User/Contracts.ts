@@ -108,15 +108,31 @@ export const GetUsersPageSchema = {
 	},
 };
 
-// get all event users
-// export const getAllEventUsers = Type.Array(
-// 	Type.Object({
-// 		ID: Type.String({ format: "uuid" }),
-// 		Name: Type.String(),
-// 		Description: Type.String(),
-// 	}),
-// );
-
-// export const eventIdParams = Type.Object({
-// 	eventID: Type.String({ format: "uuid" }),
-// });
+// Get a Page of Users Details
+export const GetUsersDetailsPageSchema = {
+	tags: ["User"],
+	description: "Returns a page of 30 users, each user a more detailed description",
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Users: Type.Array(
+				Type.Object({
+					Email: Type.String({ format: "email" }),
+					Name: Type.String(),
+					Description: Type.String(),
+					Social: Type.String(),
+					Activities: Type.Array(Type.String()),
+					Admin: Type.Boolean(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};

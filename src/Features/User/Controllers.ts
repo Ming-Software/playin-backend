@@ -105,39 +105,45 @@ export const patchUserController = async (
 	}
 };
 
-//getUsersPage
+// Get a Page of Users (30 Users per page) with minimal description
 export const getUsersPageController = async (
 	req: FastifyRequest<{ Querystring: typeof Contracts.GetUsersPageSchema.querystring.static }>,
 	res: FastifyReply,
 ) => {
 	try {
 		const usersPerPage = 30;
+
+		// We get the page from the db and the total amount of users existing
 		const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
 		const total = await prisma.user.count();
+
 		return res.status(200).send({ Users: user, Total: total });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
 };
 
-// // get all event users
-// export const getAllEventUsersController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
-// 	try {
-// 		let users: User[] = [];
-// 		await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se evento existe
+// Get a Page of Users (30 Users per page) with a more detailed description
+export const getUsersPageDetailsController = async (
+	req: FastifyRequest<{ Querystring: typeof Contracts.GetUsersPageSchema.querystring.static }>,
+	res: FastifyReply,
+) => {
+	try {
+		const usersPerPage = 30;
 
-// 		const usersIDs = await prisma.eventParticipant.findMany({ where: { EventID: req.params.eventID } });
-// 		await Promise.all(
-// 			usersIDs.map(async function (userId) {
-// 				const user = await prisma.user.findUnique({ where: { ID: userId.UserID } });
-// 				if (user) {
-// 					users.push(user);
-// 				}
-// 			}),
-// 		);
+		// We get the page from the db and the total amount of users existing
+		const user = await prisma.user.findMany({ skip: (req.query.Page - 1) * usersPerPage, take: usersPerPage });
+		const total = await prisma.user.count();
 
-// 		return res.status(200).send(users);
-// 	} catch (error) {
-// 		return res.status(500).send(error);
-// 	}
-// };
+		// We now get the activities
+		const detailedUsers = [];
+		for (const item of user) {
+			const activities = await prisma.userActivity.findMany({ where: { UserID: item.ID } });
+			detailedUsers.push({ ...item, Activities: activities.map((item) => item.ActivityName) });
+		}
+
+		return res.status(200).send({ Users: detailedUsers, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};

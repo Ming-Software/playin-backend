@@ -54,12 +54,14 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.getUsersPageController,
 	);
 
-	// // get all event users
-	// app.get(
-	// 	"/event/:eventID",
-	// 	{ preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getAllEventUsers } } },
-	// 	getAllEventUsersController,
-	// );
+	app.get(
+		"/userspage/details",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUsersDetailsPageSchema,
+		},
+		Controllers.getUsersPageDetailsController,
+	);
 };
 
 export default userRoutes;
