@@ -1,67 +1,122 @@
 import { Type } from "@sinclair/typebox";
 
-// get user details
-export const getUserDetailsResponse = Type.Object({
-  Email: Type.String({ format: "email" }),
-  Name: Type.String(),
-  Description: Type.String(),
-  Social: Type.String(),
-  Activities: Type.Array(Type.String()),
-  Admin: Type.Boolean(),
-});
+// Get Signed In User Schema
+export const GetSignedInUserSchema = {
+	tags: ["User"],
+	description: "Returns the Email, Name and Description of the signed in user",
+	response: {
+		200: Type.Object({
+			Email: Type.String({ format: "email" }),
+			Name: Type.String(),
+			Description: Type.String(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// get user
-export const getUserResponse = Type.Object({
-  Email: Type.String({ format: "email" }),
-  Name: Type.String(),
-  Description: Type.String(),
-});
+// Get User Details Schema
+export const GetSignedInUserDetailsSchema = {
+	tags: ["User"],
+	description: "Returns a more complete profile of the signed in user",
+	response: {
+		200: Type.Object({
+			Email: Type.String({ format: "email" }),
+			Name: Type.String(),
+			Description: Type.String(),
+			Social: Type.String(),
+			Activities: Type.Array(Type.String()),
+			Admin: Type.Boolean(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// delete user
-export const deleteUserResponse = Type.Object({
-  Email: Type.String({ format: "email" }),
-  Name: Type.String(),
-});
+// Delete Signed In User Schema
+export const DeleteSignedInUserSchema = {
+	tags: ["User"],
+	description: "Deletes the current signed in user",
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// patch user
-export const patchUserRequest = Type.Object({
-  Email: Type.Optional(Type.String({ format: "email" })),
-  Name: Type.Optional(Type.String()),
-  Description: Type.Optional(Type.String()),
-  Social: Type.Optional(Type.String()),
-  Activities: Type.Optional(Type.Array(Type.String())),
-});
+// Update Signed In User Schema
+export const UpdateSignedInUserSchema = {
+	tags: ["User"],
+	description: "Updates the current signed in user",
+	body: Type.Object({
+		Email: Type.Optional(Type.String({ format: "email" })),
+		Name: Type.Optional(Type.String()),
+		Description: Type.Optional(Type.String()),
+		Social: Type.Optional(Type.String()),
+		Activities: Type.Optional(Type.Array(Type.String())),
+	}),
+	response: {
+		200: Type.Object({
+			Email: Type.String({ format: "email" }),
+			Name: Type.String(),
+			Description: Type.String(),
+			Social: Type.String(),
+			Activities: Type.Array(Type.String()),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-export const patchUserResponse = Type.Object({
-  Email: Type.String({ format: "email" }),
-  Name: Type.String(),
-  Description: Type.String(),
-  Social: Type.String(),
-  Activities: Type.Array(Type.String()),
-});
-
-// Get Users with page query
-export const getUsersPageResponse = Type.Array(
-  Type.Object({
-    ID: Type.String({ format: "uuid" }),
-    Name: Type.String(),
-    Description: Type.String(),
-  })
-);
-
-export const pageQuery = Type.Object({
-  Page: Type.Number(),
-});
+// Get a Page of Users
+export const GetUsersPageSchema = {
+	tags: ["User"],
+	description: "Returns a page of 30 users, each with ID, Email, Name and Description",
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Users: Type.Array(
+				Type.Object({
+					ID: Type.String({ format: "uuid" }),
+					Email: Type.String({ format: "email" }),
+					Name: Type.String(),
+					Description: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
 // get all event users
-export const getAllEventUsers = Type.Array(
-  Type.Object({
-    ID: Type.String({ format: "uuid" }),
-    Name: Type.String(),
-    Description: Type.String(),
-  })
-);
+// export const getAllEventUsers = Type.Array(
+// 	Type.Object({
+// 		ID: Type.String({ format: "uuid" }),
+// 		Name: Type.String(),
+// 		Description: Type.String(),
+// 	}),
+// );
 
-export const eventIdParams = Type.Object({
-  eventID: Type.String({ format: "uuid" }),
-});
+// export const eventIdParams = Type.Object({
+// 	eventID: Type.String({ format: "uuid" }),
+// });

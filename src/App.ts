@@ -10,7 +10,7 @@ import FastifySwaggerUi from "@fastify/swagger-ui";
 import { verifyJWT } from "./Decorators/JWT";
 
 import authRoutes from "./Features/Auth/Routes";
-// import userRoutes from "./Features/User/Routes";
+import userRoutes from "./Features/User/Routes";
 // import eventRoutes from "./Features/Event/Routes";
 // import guestRoutes from "./Features/Guest/Routes";
 // import permissionRoutes from "./Features/Permission/Routes";
@@ -37,7 +37,7 @@ const buildApp = async () => {
 
 	// Routes
 	await app.register(authRoutes, { prefix: "/api/auth" });
-	// await app.register(userRoutes, { prefix: "/api/user" });
+	await app.register(userRoutes, { prefix: "/api/user" });
 	app.after(() => console.log("ROUTES --------> LOADED"));
 
 	// The server is ready to be accessed
