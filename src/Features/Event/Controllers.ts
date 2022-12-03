@@ -167,7 +167,7 @@ export const getEventsPageController = async (
   res: FastifyReply
 ) => {
   try {
-    const eventsPerPage = 30;
+    const eventsPerPage = 2;
     const events = await prisma.event.findMany({
       skip: (req.query.Page - 1) * eventsPerPage,
       take: eventsPerPage,
