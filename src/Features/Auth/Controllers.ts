@@ -5,6 +5,7 @@ import * as Hashing from "../../Utils/Hashing";
 import * as Contracts from "./Contracts";
 import Activities from "../../Enums/Activities";
 
+// Register a New User
 export const registerController = async (req: FastifyRequest<{ Body: typeof Contracts.RegisterSchema.body.static }>, res: FastifyReply) => {
 	try {
 		// We check to see if the email is unique
@@ -44,6 +45,7 @@ export const registerController = async (req: FastifyRequest<{ Body: typeof Cont
 	}
 };
 
+// Login a User
 export const loginController = async (req: FastifyRequest<{ Body: typeof Contracts.LoginSchema.body.static }>, res: FastifyReply) => {
 	try {
 		// We check to see if the email exists
@@ -69,6 +71,7 @@ export const loginController = async (req: FastifyRequest<{ Body: typeof Contrac
 	}
 };
 
+// Logout a User
 export const logoutController = async (_req: FastifyRequest, res: FastifyReply) => {
 	try {
 		// We just need to clear the refreshToken from the cookies
@@ -81,7 +84,7 @@ export const logoutController = async (_req: FastifyRequest, res: FastifyReply) 
 	}
 };
 
-// We use the refreshToken to generate a new accessToken
+// Generate new AccessToken using RefreshToken
 export const refreshController = async (req: FastifyRequest, res: FastifyReply) => {
 	try {
 		const decoded: { ID: string } = await req.jwtVerify({ onlyCookie: true });
