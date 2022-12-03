@@ -1,14 +1,25 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { Static } from "@sinclair/typebox";
 import prisma from "../../Utils/Prisma";
-import { newEventBody, patchEventBody, eventIdParams, userIdParams, getEventsPageQuery } from "./Contracts";
+import {
+  newEventBody,
+  patchEventBody,
+  eventIdParams,
+  userIdParams,
+  getEventsPageQuery,
+} from "./Contracts";
 
-export const getEventsController = async (req: FastifyRequest, res: FastifyReply) => {
+export const getEventsController = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
   try {
     const allEvents = await prisma.event.findMany();
     const newAllEvents = await Promise.all(
       allEvents.map(async (event) => {
-        const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
+        const activity = await prisma.activity.findUnique({
+          where: { ID: event.ActivityID },
+        });
         return { ...event, Activity: activity?.Name };
       })
     );
@@ -18,10 +29,17 @@ export const getEventsController = async (req: FastifyRequest, res: FastifyReply
   }
 };
 
-export const getEventController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
+export const getEventController = async (
+  req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>,
+  res: FastifyReply
+) => {
   try {
-    const event = await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
-    const activity = await prisma.activity.findUniqueOrThrow({ where: { ID: event.ActivityID } });
+    const event = await prisma.event.findUniqueOrThrow({
+      where: { ID: req.params.eventID },
+    });
+    const activity = await prisma.activity.findUniqueOrThrow({
+      where: { ID: event.ActivityID },
+    });
 
     return res.status(200).send({ ...event, Activity: activity.Name });
   } catch (error) {
@@ -29,9 +47,14 @@ export const getEventController = async (req: FastifyRequest<{ Params: Static<ty
   }
 };
 
-export const newEventController = async (req: FastifyRequest<{ Body: Static<typeof newEventBody> }>, res: FastifyReply) => {
+export const newEventController = async (
+  req: FastifyRequest<{ Body: Static<typeof newEventBody> }>,
+  res: FastifyReply
+) => {
   try {
-    const activity = await prisma.activity.findUniqueOrThrow({ where: { Name: req.body.Activity } });
+    const activity = await prisma.activity.findUniqueOrThrow({
+      where: { Name: req.body.Activity },
+    });
 
     await prisma.event.create({
       data: {
@@ -56,7 +79,10 @@ export const newEventController = async (req: FastifyRequest<{ Body: Static<type
 };
 
 export const patchEventController = async (
-  req: FastifyRequest<{ Params: Static<typeof eventIdParams>; Body: Static<typeof patchEventBody> }>,
+  req: FastifyRequest<{
+    Params: Static<typeof eventIdParams>;
+    Body: Static<typeof patchEventBody>;
+  }>,
   res: FastifyReply
 ) => {
   try {
@@ -68,7 +94,9 @@ export const patchEventController = async (
       finish = new Date(req.body.Finish);
     }
     if (req.body.Activity) {
-      activity = await prisma.activity.findUniqueOrThrow({ where: { Name: req.body.Activity } });
+      activity = await prisma.activity.findUniqueOrThrow({
+        where: { Name: req.body.Activity },
+      });
     }
     if (activity) {
       const event = await prisma.event.update({
@@ -94,9 +122,14 @@ export const patchEventController = async (
   }
 };
 
-export const deleteEventController = async (req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>, res: FastifyReply) => {
+export const deleteEventController = async (
+  req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>,
+  res: FastifyReply
+) => {
   try {
-    const event = await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } });
+    const event = await prisma.event.findUniqueOrThrow({
+      where: { ID: req.params.eventID },
+    });
 
     if (event.UserID == req.user.ID) {
       await prisma.event.delete({ where: { ID: req.params.eventID } });
@@ -107,12 +140,19 @@ export const deleteEventController = async (req: FastifyRequest<{ Params: Static
   }
 };
 
-export const getUserEventsController = async (req: FastifyRequest<{ Params: Static<typeof userIdParams> }>, res: FastifyReply) => {
+export const getUserEventsController = async (
+  req: FastifyRequest<{ Params: Static<typeof userIdParams> }>,
+  res: FastifyReply
+) => {
   try {
-    const allEvents = await prisma.event.findMany({ where: { UserID: req.params.userID } });
+    const allEvents = await prisma.event.findMany({
+      where: { UserID: req.params.userID },
+    });
     const newAllEvents = await Promise.all(
       allEvents.map(async (event) => {
-        const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
+        const activity = await prisma.activity.findUnique({
+          where: { ID: event.ActivityID },
+        });
         return { ...event, Activity: activity?.Name };
       })
     );
@@ -128,9 +168,26 @@ export const getEventsPageController = async (
 ) => {
   try {
     const eventsPerPage = 30;
-    const events = await prisma.event.findMany({ skip: (req.query.Page - 1) * eventsPerPage, take: eventsPerPage });
-    console.log(events);
-    res.status(200).send(events);
+    const events = await prisma.event.findMany({
+      skip: (req.query.Page - 1) * eventsPerPage,
+      take: eventsPerPage,
+    });
+
+    let allEvents = [];
+    for (const item of events) {
+      const activity = await prisma.activity.findUnique({
+        where: { ID: item.ActivityID },
+      });
+      const creator = await prisma.user.findUnique({
+        where: { ID: item.UserID },
+      });
+      allEvents.push({
+        Activity: activity?.Name,
+        Creator: creator?.Name,
+        ...item,
+      });
+    }
+    res.status(200).send(allEvents);
   } catch (error) {
     return res.status(500).send(error);
   }
