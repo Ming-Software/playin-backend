@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -55,6 +56,9 @@ model Event {
   EventGuest       EventGuest[]
   EventParticipant EventParticipant[]
   EventPermission  EventPermission[]
+
+  @@index([UserID])
+  @@index([ActivityID])
 }
 
 model Message {
@@ -67,6 +71,9 @@ model Message {
   User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
   Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
+
+  @@index([UserID])
+  @@index([EventID])
 }
 
 model Activity {
@@ -90,6 +97,8 @@ model EventGuest {
   Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
+  @@index([UserID])
+  @@index([EventID])
 }
 
 // Alguem que vai participar
@@ -102,6 +111,8 @@ model EventParticipant {
   Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
+  @@index([UserID])
+  @@index([EventID])
 }
 
 // Alguem que pede para participar
@@ -114,6 +125,8 @@ model EventPermission {
   Event   Event  @relation(fields: [EventID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, EventID])
+  @@index([UserID])
+  @@index([EventID])
 }
 
 model UserActivity {
@@ -125,4 +138,6 @@ model UserActivity {
   Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, ActivityID])
+  @@index([UserID])
+  @@index([ActivityID])
 }
