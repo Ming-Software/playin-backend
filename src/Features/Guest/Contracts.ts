@@ -42,8 +42,6 @@ export const RemoveGuestByOwnerSchema = {
 	},
 };
 
-// Remove a Guest from an Event By Guest Schema
-
 // Get Event Guests Page Schema
 export const GetEventGuestsPageSchema = {
 	tags: ["Guest"],
@@ -75,7 +73,7 @@ export const GetEventGuestsPageSchema = {
 };
 
 // Get User Invitations Page Schema
-export const GetUserInvitationsPageSchema = {
+export const GetUserInvitationsSignedInPageSchema = {
 	tags: ["Guest"],
 	description: "Returns a page of invitations the signed in user has received",
 	querystring: Type.Object({

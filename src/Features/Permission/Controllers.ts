@@ -112,7 +112,7 @@ export const getEventPermissionsPageController = async (
 };
 
 // Get User Permissions Page (by the signed in user)
-export const getUserInvitationsPageController = async (
+export const getUserPermissionsPageController = async (
 	req: FastifyRequest<{ Querystring: typeof Contracts.GetUserPermissionsPageSchema.querystring.static }>,
 	res: FastifyReply,
 ) => {

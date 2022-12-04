@@ -24,9 +24,7 @@ const permissionRoutes = async (app: FastifyInstance) => {
 		Controllers.removeGuestByOwnerController,
 	);
 
-	// Delete Permission By User Who made the Request
-
-	// Get Event Requests Page
+	// Get Event Requests Page By Owner
 	app.get(
 		"/permissionspage/event/:EventID",
 		{
@@ -41,9 +39,9 @@ const permissionRoutes = async (app: FastifyInstance) => {
 		"/permissionspage/user",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
-			schema: Contracts.GetEventPermissionsPageSchema,
+			schema: Contracts.GetUserPermissionsPageSchema,
 		},
-		Controllers.getEventPermissionsPageController,
+		Controllers.getUserPermissionsPageController,
 	);
 };
 

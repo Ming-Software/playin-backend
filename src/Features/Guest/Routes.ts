@@ -24,8 +24,6 @@ const guestRoutes = async (app: FastifyInstance) => {
 		Controllers.removeGuestByOwnerController,
 	);
 
-	// Remove a Guest from an Event by the Guest
-
 	// Get Event Guests Page
 	app.get(
 		"/guestspage/event/:EventID",
@@ -41,9 +39,9 @@ const guestRoutes = async (app: FastifyInstance) => {
 		"/guestspage/user",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
-			schema: Contracts.GetUserInvitationsPageSchema,
+			schema: Contracts.GetUserInvitationsSignedInPageSchema,
 		},
-		Controllers.getUserInvitationsPageController,
+		Controllers.getUserInvitationsSignedInController,
 	);
 };
 
