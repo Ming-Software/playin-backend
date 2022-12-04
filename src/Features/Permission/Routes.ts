@@ -1,44 +1,50 @@
 import { FastifyInstance } from "fastify";
-import {
-  statusResponse,
-  getEventPermissionResponse,
-  getEventPermissionsResponse,
-  acceptPermissionParams,
-  eventIdParams,
-} from "./Contracts";
-import { sendPermissionController, removePermissionController, getEventPermissions } from "./Controllers";
+
+import * as Contracts from "./Contracts";
+import * as Controllers from "./Controllers";
 
 const permissionRoutes = async (app: FastifyInstance) => {
-  app.get(
-    "/",
-    {
-      preHandler: app.auth([app.verifyAccessJWT]) as any,
-      schema: { response: { 200: getEventPermissionsResponse } },
-    },
-    getEventPermissions
-  );
-  // Send Permission to participate in an event
-  app.post(
-    "/:eventID",
-    {
-      preHandler: app.auth([app.verifyAccessJWT]) as any,
-      schema: { params: eventIdParams, response: { 200: getEventPermissionResponse } },
-    },
-    sendPermissionController
-  );
+	// Create new Permission
+	app.post(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.NewRequestSchema,
+		},
+		Controllers.newRequestontroller,
+	);
 
-  // Remove a permission sent from an event
-  app.delete(
-    "/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { params: eventIdParams, response: { 200: statusResponse } } },
-    removePermissionController
-  );
-  // Accept a request to participate on a event
-  app.post(
-    "/accept/:EventID/:UserID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { params: acceptPermissionParams, response: { 200: statusResponse } } },
-    removePermissionController
-  );
+	// Delete Permission By Owner
+	app.delete(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.DeletePermissionByOwnerSchema,
+		},
+		Controllers.removeGuestByOwnerController,
+	);
+
+	// Delete Permission By User Who made the Request
+
+	// Get Event Requests Page
+	app.get(
+		"/permissionspage/event/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventPermissionsPageSchema,
+		},
+		Controllers.getEventPermissionsPageController,
+	);
+
+	// Get User Requests Page
+	app.get(
+		"/permissionspage/user/:UserID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventPermissionsPageSchema,
+		},
+		Controllers.getEventPermissionsPageController,
+	);
 };
 
 export default permissionRoutes;

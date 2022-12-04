@@ -14,22 +14,24 @@ const guestRoutes = async (app: FastifyInstance) => {
 		Controllers.inviteUserController,
 	);
 
-	// Remove an Invite from an Event
+	// Remove an Invite from an Event (Called by the owner)
 	app.delete(
 		"/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
-			schema: Contracts.RemoveGuestSchema,
+			schema: Contracts.RemoveGuestByOwnerSchema,
 		},
-		Controllers.removeGuestController,
+		Controllers.removeGuestByOwnerController,
 	);
+
+	// Remove a Guest from an Event by the Guest
 
 	// Get Event Guests Page
 	app.get(
 		"/guestspage/event/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
-			schema: Contracts.GetEventGuestsPage,
+			schema: Contracts.GetEventGuestsPageSchema,
 		},
 		Controllers.getEventGuestsPageController,
 	);
@@ -39,7 +41,7 @@ const guestRoutes = async (app: FastifyInstance) => {
 		"/guestspage/user/:UserID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
-			schema: Contracts.GetUserInvitationsPage,
+			schema: Contracts.GetUserInvitationsPageSchema,
 		},
 		Controllers.getUserInvitationsPageController,
 	);

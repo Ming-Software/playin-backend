@@ -47,25 +47,27 @@ export const inviteUserController = async (
 	}
 };
 
-// Remove an invite from an event
-export const removeGuestController = async (
+// Remove an invite from an event (only the owner can delete)
+export const removeGuestByOwnerController = async (
 	req: FastifyRequest<{
-		Params: typeof Contracts.RemoveGuestSchema.params.static;
-		Body: typeof Contracts.RemoveGuestSchema.body.static;
+		Params: typeof Contracts.RemoveGuestByOwnerSchema.params.static;
+		Body: typeof Contracts.RemoveGuestByOwnerSchema.body.static;
 	}>,
 	res: FastifyReply,
 ) => {
 	try {
-		// Verify if the event exists and we have permission
+		// Verify if the event exists
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
+
+		// We check for permission. Only the owner can delete this invite
 		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// The user must exist
 		const user = await prisma.user.findUnique({ where: { ID: req.body.UserID } });
 		if (!user) throw new Error("User does not exist");
 
-		// The user must not have already been invited
+		// The user must have already been invited
 		const guest = await prisma.eventGuest.findUnique({
 			where: { UserID_EventID: { UserID: user.ID, EventID: req.params.EventID } },
 		});
@@ -79,11 +81,13 @@ export const removeGuestController = async (
 	}
 };
 
+// Remove an invite from an event (only the guest can delete)
+
 // Get Event Guests Page
 export const getEventGuestsPageController = async (
 	req: FastifyRequest<{
-		Params: typeof Contracts.GetEventGuestsPage.params.static;
-		Querystring: typeof Contracts.GetEventGuestsPage.querystring.static;
+		Params: typeof Contracts.GetEventGuestsPageSchema.params.static;
+		Querystring: typeof Contracts.GetEventGuestsPageSchema.querystring.static;
 	}>,
 	res: FastifyReply,
 ) => {
@@ -91,9 +95,10 @@ export const getEventGuestsPageController = async (
 		// Verify if the event exists and we have permission
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We get the page of guests
-		const guestsPerPage = 30;
+		const guestsPerPage = 15;
 		const guests = await prisma.eventGuest.findMany({
 			where: { EventID: req.params.EventID },
 			skip: (req.query.Page - 1) * guestsPerPage,
@@ -116,29 +121,21 @@ export const getEventGuestsPageController = async (
 	}
 };
 
-// Get User Invitations Page Schema
+// Get User Invitations Page
 export const getUserInvitationsPageController = async (
-	req: FastifyRequest<{
-		Params: typeof Contracts.GetUserInvitationsPage.params.static;
-		Querystring: typeof Contracts.GetUserInvitationsPage.querystring.static;
-	}>,
+	req: FastifyRequest<{ Querystring: typeof Contracts.GetUserInvitationsPageSchema.querystring.static }>,
 	res: FastifyReply,
 ) => {
 	try {
-		// Verify if the event exists and we have permission
-		const user = await prisma.user.findUnique({ where: { ID: req.params.UserID } });
-		if (!user) throw new Error("User does not exist");
-		if (user.ID !== req.user.ID) throw new Error("You do not have permmission");
-
 		// We get the page of guests
-		const guestsPerPage = 30;
+		const guestsPerPage = 15;
 		const invitations = await prisma.eventGuest.findMany({
-			where: { UserID: req.params.UserID },
+			where: { UserID: req.user.ID },
 			skip: (req.query.Page - 1) * guestsPerPage,
 			take: guestsPerPage,
 			orderBy: { CreatedAt: "desc" },
 		});
-		const total = await prisma.eventGuest.count({ where: { UserID: req.params.UserID } });
+		const total = await prisma.eventGuest.count({ where: { UserID: req.user.ID } });
 
 		// We now get the details of each guest
 		const invitationsDetails = [];

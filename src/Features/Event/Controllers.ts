@@ -154,7 +154,7 @@ export const getEventsByUserPageController = async (
 ) => {
 	try {
 		// We get the page of events
-		const eventsPerPage = 30;
+		const eventsPerPage = 15;
 		const events = await prisma.event.findMany({
 			where: { UserID: req.params.UserID },
 			skip: (req.query.Page - 1) * eventsPerPage,
@@ -185,7 +185,7 @@ export const getEventsPageController = async (
 ) => {
 	try {
 		// We get the page of events
-		const eventsPerPage = 30;
+		const eventsPerPage = 15;
 		const events = await prisma.event.findMany({
 			skip: (req.query.Page - 1) * eventsPerPage,
 			take: eventsPerPage,

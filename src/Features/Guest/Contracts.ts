@@ -21,10 +21,10 @@ export const InviteUserSchema = {
 	},
 };
 
-// Remove a Guest from an Event Schema
-export const RemoveGuestSchema = {
+// Remove a Guest from an Event By Owner Schema
+export const RemoveGuestByOwnerSchema = {
 	tags: ["Guest"],
-	description: "Removes multiple guests from an event",
+	description: "Removes a guest from an event. Only the creator may use this endpoint",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),
@@ -42,10 +42,12 @@ export const RemoveGuestSchema = {
 	},
 };
 
+// Remove a Guest from an Event By Guest Schema
+
 // Get Event Guests Page Schema
-export const GetEventGuestsPage = {
+export const GetEventGuestsPageSchema = {
 	tags: ["Guest"],
-	description: "Returns a page of invited users to an event",
+	description: "Returns a page of invited users to an event. This can only be called by the event creator",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),
@@ -73,12 +75,9 @@ export const GetEventGuestsPage = {
 };
 
 // Get User Invitations Page Schema
-export const GetUserInvitationsPage = {
+export const GetUserInvitationsPageSchema = {
 	tags: ["Guest"],
-	description: "Returns a page of invitations a user has received",
-	params: Type.Object({
-		UserID: Type.String({ format: "uuid" }),
-	}),
+	description: "Returns a page of invitations the signed in user has received",
 	querystring: Type.Object({
 		Page: Type.Number(),
 	}),

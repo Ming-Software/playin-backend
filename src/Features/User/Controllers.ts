@@ -115,7 +115,7 @@ export const getUsersPageController = async (
 	res: FastifyReply,
 ) => {
 	try {
-		const usersPerPage = 30;
+		const usersPerPage = 15;
 
 		// We get the page from the db and the total amount of users existing
 		const user = await prisma.user.findMany({
@@ -137,7 +137,7 @@ export const getUsersPageDetailsController = async (
 	res: FastifyReply,
 ) => {
 	try {
-		const usersPerPage = 30;
+		const usersPerPage = 15;
 
 		// We get the page from the db and the total amount of users existing
 		const users = await prisma.user.findMany({
