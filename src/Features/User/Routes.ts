@@ -1,64 +1,68 @@
 import { FastifyInstance } from "fastify";
-import {
-  getUserDetailsResponse,
-  getUserResponse,
-  deleteUserResponse,
-  patchUserResponse,
-  patchUserRequest,
-  getUsersPageResponse,
-  getAllEventUsers,
-  pageQuery,
-} from "./Contracts";
-import {
-  getUserDetailsController,
-  getUserController,
-  deleteUserController,
-  patchUserController,
-  getUsersPageController,
-  getAllEventUsersController,
-} from "./Controllers";
+
+import * as Contracts from "./Contracts";
+import * as Controllers from "./Controllers";
 
 const userRoutes = async (app: FastifyInstance) => {
-  // get
-  app.get("/", { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getUserResponse } } }, getUserController);
+	// Get Signed In User
+	app.get(
+		"/",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetSignedInUserSchema,
+		},
+		Controllers.getSignedInUserController,
+	);
 
-  // get details
-  app.get(
-    "/details",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getUserDetailsResponse } } },
-    getUserDetailsController
-  );
+	// Get Signed In User Details
+	app.get(
+		"/details",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetSignedInUserDetailsSchema,
+		},
+		Controllers.getSignedInUserDetailsController,
+	);
 
-  // delete
-  app.delete(
-    "/",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: deleteUserResponse } } },
-    deleteUserController
-  );
+	// Delete Signed In User
+	app.delete(
+		"/",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.DeleteSignedInUserSchema,
+		},
+		Controllers.deleteSignedInUserController,
+	);
 
-  // patch
-  app.patch(
-    "/",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: patchUserRequest, response: { 200: patchUserResponse } } },
-    patchUserController
-  );
+	// Update Signed In User
+	app.patch(
+		"/",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.UpdateSignedInUserSchema,
+		},
+		Controllers.patchUserController,
+	);
 
-  // getUsersPage
-  app.get(
-    "/userspage",
-    {
-      preHandler: app.auth([app.verifyAccessJWT]) as any,
-      schema: { querystring: pageQuery, response: { 200: getUsersPageResponse } },
-    },
-    getUsersPageController
-  );
+	// Get a Page of All the Users with minimal information
+	app.get(
+		"/userspage",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUsersPageSchema,
+		},
+		Controllers.getUsersPageController,
+	);
 
-  // get all event users
-  app.get(
-    "/event/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getAllEventUsers } } },
-    getAllEventUsersController
-  );
+	// Get a Page of All the Users with detailed information
+	app.get(
+		"/userspage/details",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUsersDetailsPageSchema,
+		},
+		Controllers.getUsersPageDetailsController,
+	);
 };
 
 export default userRoutes;

@@ -243,7 +243,7 @@ Quando quer criar um evento.
 ```
 POST:
   REQUEST:
-      BODY: 
+      BODY:
         Name: String,
         Description: String,
         Start: String format("date-time") 'ex: 2000-10-3 12:00:00' ,
@@ -388,7 +388,7 @@ Quando queremos uma pagina de eventos (30 eventos)
 GET:
   QUERY:
     Page: Number
-    
+
   RESPONSE:
     [
       ID: String,
@@ -423,7 +423,7 @@ Enviar convite a vários utilizadores ao mesmo tempo.
 ```
 POST:
   REQUEST:
-      BODY: 
+      BODY:
       [
       ID: String format("uuid"),
       ]
@@ -437,6 +437,7 @@ POST:
     2. Devolve um erro se alguma coisa correr mal
     3. Devolve um erro se o evento não existir
 ```
+
 ### Invite User (/event/invite/:eventID)
 
 Enviar convite a um utilizador.
@@ -449,7 +450,7 @@ POST:
   RESPONSE:
     StatusCode:  200
     ID: String format("uuid"),
-  
+
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
@@ -467,7 +468,7 @@ DELETE:
     StatusCode:  200
     ID:   String format("uuid"),
     Name: String,
-    
+
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
@@ -502,26 +503,28 @@ GET:
     2. Devolve um erro se alguma coisa correr mal
 ```
 
-
 ## Permission (/api/permission)
+
 Endpoints que remetem para ações de permissões.
 
 ## Accept a permission (/:EventID/:UserID)
+
 Aceitar um pedido para participar num evento de um utilizado
+
 ```
 POST:
-  PARAMS: 
+  PARAMS:
     EventID: o ID do evento em que foi feito o pedido
     UserID: o ID do user que pediu para participar
-  
+
   RESPONSE:
     Status: A dizer que o utilizador foi aceite
-    
+
   ERROS:
     1. A permissão não existe
     2: O evento ou utilizador na permissão não existem
     3. O utlizador que está a aceitar o pedido não é o dono do evento
-      
+
 ```
 
 ## Participant (/api/participant)
@@ -538,14 +541,9 @@ DELETE:
     StatusCode:  200
     ID:           String   (Formato: uuid),
     Name:         String
-  
+
   ERROS:
     1. Devolve um erro de Unauthorized quando o RefreshToken não é valido
     2. Devolve um erro se alguma coisa correr mal
 
 ```
-
-
-
-
-

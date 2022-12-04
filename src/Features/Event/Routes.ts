@@ -1,75 +1,68 @@
 import { FastifyInstance } from "fastify";
-import {
-  getEventsResponse,
-  getEventResponse,
-  statusEventResponse,
-  newEventBody,
-  patchEventBody,
-  getEventsPageQuery,
-  getEventsPageResponse,
-} from "./Contracts";
-import {
-  getEventsController,
-  newEventController,
-  patchEventController,
-  deleteEventController,
-  getEventController,
-  getUserEventsController,
-  getEventsPageController,
-} from "./Controllers";
+
+import * as Contracts from "./Contracts";
+import * as Controllers from "./Controllers";
 
 const eventRoutes = async (app: FastifyInstance) => {
-  // Get all events
-  app.get(
-    "/",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getEventsResponse } } },
-    getEventsController
-  );
+	// Create New Event
+	app.post(
+		"/",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.NewEventSchema,
+		},
+		Controllers.newEventController,
+	);
 
-  // Get one event
-  app.get(
-    "/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getEventResponse } } },
-    getEventController
-  );
+	// Get One Event Given an ID
+	app.get(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventSchema,
+		},
+		Controllers.getEventController,
+	);
 
-  // get all events from one user
-  app.get(
-    "/users/:userID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getEventsResponse } } },
-    getUserEventsController
-  );
+	// Delete Event Given an ID
+	app.delete(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.DeleteEventSchema,
+		},
+		Controllers.deleteEventController,
+	);
 
-  // create event
-  app.post(
-    "/",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: newEventBody, response: { 200: statusEventResponse } } },
-    newEventController
-  );
+	// Update Event Given an ID
+	app.patch(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.UpdateEventSchema,
+		},
+		Controllers.updateEventController,
+	);
 
-  // update event
-  app.patch(
-    "/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: patchEventBody, response: { 200: getEventResponse } } },
-    patchEventController
-  );
+	// Get a Page of Events
+	app.get(
+		"/eventspage",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventsPageSchema,
+		},
+		Controllers.getEventsPageController,
+	);
 
-  // delete event
-  app.delete(
-    "/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: statusEventResponse } } },
-    deleteEventController
-  );
-
-  // Get event Page
-  app.get(
-    "/eventspage",
-    {
-      preHandler: app.auth([app.verifyAccessJWT]) as any,
-      schema: { querystring: getEventsPageQuery, response: { 200: getEventsPageResponse } },
-    },
-    getEventsPageController
-  );
+	// Get One Page of Events Created by One User
+	app.get(
+		"/eventspage/:UserID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventsByUserPageSchema,
+		},
+		Controllers.getEventsByUserPageController,
+	);
 };
 
 export default eventRoutes;

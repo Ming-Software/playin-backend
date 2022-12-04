@@ -1,196 +1,210 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Static } from "@sinclair/typebox";
+
 import prisma from "../../Utils/Prisma";
-import {
-  newEventBody,
-  patchEventBody,
-  eventIdParams,
-  userIdParams,
-  getEventsPageQuery,
-} from "./Contracts";
+import * as Contracts from "./Contracts";
 
-export const getEventsController = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
-  try {
-    const allEvents = await prisma.event.findMany();
-    const newAllEvents = await Promise.all(
-      allEvents.map(async (event) => {
-        const activity = await prisma.activity.findUnique({
-          where: { ID: event.ActivityID },
-        });
-        return { ...event, Activity: activity?.Name };
-      })
-    );
-    return res.status(200).send(newAllEvents);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
-
-export const getEventController = async (
-  req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>,
-  res: FastifyReply
-) => {
-  try {
-    const event = await prisma.event.findUniqueOrThrow({
-      where: { ID: req.params.eventID },
-    });
-    const activity = await prisma.activity.findUniqueOrThrow({
-      where: { ID: event.ActivityID },
-    });
-
-    return res.status(200).send({ ...event, Activity: activity.Name });
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
-
+// Create New Event Controller
 export const newEventController = async (
-  req: FastifyRequest<{ Body: Static<typeof newEventBody> }>,
-  res: FastifyReply
+	req: FastifyRequest<{ Body: typeof Contracts.NewEventSchema.body.static }>,
+	res: FastifyReply,
 ) => {
-  try {
-    const activity = await prisma.activity.findUniqueOrThrow({
-      where: { Name: req.body.Activity },
-    });
+	try {
+		// We verify that the activity and the dates are valid
+		const activity = await prisma.activity.findUnique({ where: { Name: req.body.Activity } });
+		if (!activity) throw new Error(`Activity ${req.body.Activity} does not exist`);
+		if (req.body.Start >= req.body.Finish) throw new Error("Finish date is either equal or inferior to start date");
 
-    await prisma.event.create({
-      data: {
-        Name: req.body.Name,
-        Description: req.body.Description,
-        Start: new Date(req.body.Start),
-        Locale: req.body.Locale,
-        Finish: new Date(req.body.Finish),
-        Public: req.body.Public,
-        MaxUsers: req.body.MaxUsers,
-        CurrentUsers: req.body.CurrentUsers,
-        UserID: req.user.ID,
-        ActivityID: activity.ID,
-        Social: req.body.Social,
-      },
-    });
+		const event = await prisma.event.create({
+			data: {
+				Name: req.body.Name,
+				Description: req.body.Description,
+				Public: req.body.Public,
+				Start: new Date(req.body.Start),
+				Finish: new Date(req.body.Finish),
+				Locale: req.body.Locale,
+				MaxUsers: req.body.MaxUsers,
+				CurrentUsers: req.body.CurrentUsers,
+				Social: req.body.Social,
+				ActivityID: activity.ID,
+				UserID: req.user.ID,
+			},
+		});
 
-    return res.status(200).send({ Status: "Event created with success" });
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// We add ourselves as a participant
+		await prisma.eventParticipant.create({ data: { EventID: event.ID, UserID: req.user.ID } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
-export const patchEventController = async (
-  req: FastifyRequest<{
-    Params: Static<typeof eventIdParams>;
-    Body: Static<typeof patchEventBody>;
-  }>,
-  res: FastifyReply
+// Get One Event Given an ID
+export const getEventController = async (
+	req: FastifyRequest<{ Params: typeof Contracts.GetEventSchema.params.static }>,
+	res: FastifyReply,
 ) => {
-  try {
-    var finish, activity, startDate;
-    if (req.body.Start) {
-      startDate = new Date(req.body.Start);
-    }
-    if (req.body.Finish) {
-      finish = new Date(req.body.Finish);
-    }
-    if (req.body.Activity) {
-      activity = await prisma.activity.findUniqueOrThrow({
-        where: { Name: req.body.Activity },
-      });
-    }
-    if (activity) {
-      const event = await prisma.event.update({
-        data: {
-          Name: req.body.Name,
-          Description: req.body.Description,
-          Start: startDate,
-          Locale: req.body.Locale,
-          Finish: finish,
-          Public: req.body.Public,
-          MaxUsers: req.body.MaxUsers,
-          CurrentUsers: req.body.CurrentUsers,
-          UserID: req.user.ID,
-          ActivityID: activity.ID,
-          Social: req.body.Social,
-        },
-        where: { ID: req.params.eventID },
-      });
-      return res.status(200).send(event);
-    }
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+	try {
+		// We get the event from the db
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+
+		// We get the activity from the db
+		const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
+		if (!activity) throw new Error("Activity does not exist");
+
+		return res.status(200).send({ ...event, Activity: activity.Name });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
+// Delete an Event Given an ID
 export const deleteEventController = async (
-  req: FastifyRequest<{ Params: Static<typeof eventIdParams> }>,
-  res: FastifyReply
+	req: FastifyRequest<{ Params: typeof Contracts.DeleteEventSchema.params.static }>,
+	res: FastifyReply,
 ) => {
-  try {
-    const event = await prisma.event.findUniqueOrThrow({
-      where: { ID: req.params.eventID },
-    });
+	try {
+		// We must verify that the event exists and that we have the permission to delete it (we are the creators)
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
-    if (event.UserID == req.user.ID) {
-      await prisma.event.delete({ where: { ID: req.params.eventID } });
-      return res.status(200).send({ Status: "Event deleted with success" });
-    } else return res.status(500).send({ Status: "Permission Denied" });
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// We delete the event
+		await prisma.event.delete({ where: { ID: req.params.EventID } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
-export const getUserEventsController = async (
-  req: FastifyRequest<{ Params: Static<typeof userIdParams> }>,
-  res: FastifyReply
+// Update an Event Given an ID
+export const updateEventController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.UpdateEventSchema.params.static;
+		Body: typeof Contracts.UpdateEventSchema.body.static;
+	}>,
+	res: FastifyReply,
 ) => {
-  try {
-    const allEvents = await prisma.event.findMany({
-      where: { UserID: req.params.userID },
-    });
-    const newAllEvents = await Promise.all(
-      allEvents.map(async (event) => {
-        const activity = await prisma.activity.findUnique({
-          where: { ID: event.ActivityID },
-        });
-        return { ...event, Activity: activity?.Name };
-      })
-    );
-    return res.status(200).send(newAllEvents);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+	try {
+		// We must verify that the event exists and that we have the permission to delete it (we are the creators)
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
+
+		let activity = undefined;
+		let startDate = undefined;
+		let finishDate = undefined;
+
+		// We must verify that the acitivity, if updated, exists
+		if (req.body.Activity) {
+			activity = await prisma.activity.findUnique({ where: { Name: req.body.Activity } });
+			if (!activity) throw new Error("Activity does not exist");
+		}
+
+		// We must verify both the start and finish date if to be changed
+		if (req.body.Start && req.body.Finish) {
+			const startDate = new Date(req.body.Start);
+			const finishDate = new Date(req.body.Finish);
+			if (startDate >= finishDate) throw new Error("Finish date is either equal or inferior to start date");
+		}
+		// We must verify the start date if to be changed
+		else if (req.body.Start) {
+			startDate = new Date(req.body.Start);
+			if (startDate >= event.Finish) throw new Error("Finish date is either equal or inferior to start date");
+		}
+		// We must verify the finish date if to be changed
+		else if (req.body.Finish) {
+			finishDate = new Date(req.body.Finish);
+			if (event.Start >= finishDate) throw new Error("Finish date is either equal or inferior to start date");
+		}
+
+		// We update the event and get the new/old activity
+		const eventUpdated = await prisma.event.update({
+			data: {
+				Name: req.body.Name,
+				Description: req.body.Description,
+				Public: req.body.Public,
+				Start: startDate,
+				Finish: finishDate,
+				Locale: req.body.Locale,
+				MaxUsers: req.body.MaxUsers,
+				CurrentUsers: req.body.CurrentUsers,
+				Social: req.body.Social,
+				ActivityID: activity?.ID,
+				UserID: req.user.ID,
+			},
+			where: { ID: req.params.EventID },
+		});
+		activity = await prisma.activity.findUnique({ where: { ID: eventUpdated.ActivityID } });
+
+		return res.status(200).send({ ...eventUpdated, Activity: activity?.Name });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
+export const getEventsByUserPageController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetEventsByUserPageSchema.params.static;
+		Querystring: typeof Contracts.GetEventsByUserPageSchema.querystring.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// We get the page of events
+		const eventsPerPage = 15;
+		const events = await prisma.event.findMany({
+			where: { UserID: req.params.UserID },
+			skip: (req.query.Page - 1) * eventsPerPage,
+			take: eventsPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
+
+		// We get the name of the acticivity and of the user
+		const eventsPage = [];
+		const creator = await prisma.user.findUnique({ where: { ID: req.params.UserID } });
+		for (const item of events) {
+			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });
+			eventsPage.push({ ...item, Activity: activity?.Name, Creator: creator?.Name });
+		}
+
+		// We get the total events of this user
+		const total = await prisma.event.count({ where: { UserID: req.params.UserID } });
+
+		return res.status(200).send({ Events: eventsPage, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
 export const getEventsPageController = async (
-  req: FastifyRequest<{ Querystring: Static<typeof getEventsPageQuery> }>,
-  res: FastifyReply
+	req: FastifyRequest<{ Querystring: typeof Contracts.GetEventsPageSchema.querystring.static }>,
+	res: FastifyReply,
 ) => {
-  try {
-    const eventsPerPage = 2;
-    const events = await prisma.event.findMany({
-      skip: (req.query.Page - 1) * eventsPerPage,
-      take: eventsPerPage,
-    });
+	try {
+		// We get the page of events
+		const eventsPerPage = 15;
+		const events = await prisma.event.findMany({
+			skip: (req.query.Page - 1) * eventsPerPage,
+			take: eventsPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
 
-    let allEvents = [];
-    for (const item of events) {
-      const activity = await prisma.activity.findUnique({
-        where: { ID: item.ActivityID },
-      });
-      const creator = await prisma.user.findUnique({
-        where: { ID: item.UserID },
-      });
-      allEvents.push({
-        Activity: activity?.Name,
-        Creator: creator?.Name,
-        ...item,
-      });
-    }
+		// We get the name of the acticivity and of the creator
+		const eventsPage = [];
+		for (const item of events) {
+			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });
+			const creator = await prisma.user.findUnique({ where: { ID: item.UserID } });
+			eventsPage.push({ ...item, Activity: activity?.Name, Creator: creator?.Name });
+		}
 
-    const total = await prisma.event.count();
-    res.status(200).send({ Events: allEvents, Total: total });
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// We get the total events of this user
+		const total = await prisma.event.count();
+
+		return res.status(200).send({ Events: eventsPage, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };

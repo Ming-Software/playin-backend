@@ -1,42 +1,50 @@
 import { FastifyInstance } from "fastify";
-import {
-  getUserInvitationsResponse,
-  inviteUserRequest,
-  inviteUserResponse,
-  inviteUsersRequest,
-  inviteUsersResponse,
-  removeInviteUsersResponse,
-} from "./Contracts";
-import { getUserInvitationsController, inviteUserController, inviteUsersController, removeInviteUsersController } from "./Controllers";
+
+import * as Contracts from "./Contracts";
+import * as Controllers from "./Controllers";
 
 const guestRoutes = async (app: FastifyInstance) => {
-  // Invite Users
-  app.post(
-    "/event/invites/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: inviteUsersRequest, response: { 200: inviteUsersResponse } } },
-    inviteUsersController
-  );
+	// Invite Users
+	app.post(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.InviteUserSchema,
+		},
+		Controllers.inviteUserController,
+	);
 
-  // Invite User
-  app.post(
-    "/event/invite/:eventID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { body: inviteUserRequest, response: { 200: inviteUserResponse } } },
-    inviteUserController
-  );
+	// Remove an Invite from an Event (Called by the owner)
+	app.delete(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.RemoveGuestByOwnerSchema,
+		},
+		Controllers.removeGuestByOwnerController,
+	);
 
-  // Remove an invite from an event
-  app.delete(
-    "/event/invite/:eventID/:userID",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: removeInviteUsersResponse } } },
-    removeInviteUsersController
-  );
+	// Remove a Guest from an Event by the Guest
 
-  // User invitations
-  app.get(
-    "/user",
-    { preHandler: app.auth([app.verifyAccessJWT]) as any, schema: { response: { 200: getUserInvitationsResponse } } },
-    getUserInvitationsController
-  );
+	// Get Event Guests Page
+	app.get(
+		"/guestspage/event/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventGuestsPageSchema,
+		},
+		Controllers.getEventGuestsPageController,
+	);
+
+	// Get User Invitations Page
+	app.get(
+		"/guestspage/user/:UserID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUserInvitationsPageSchema,
+		},
+		Controllers.getUserInvitationsPageController,
+	);
 };
 
 export default guestRoutes;
