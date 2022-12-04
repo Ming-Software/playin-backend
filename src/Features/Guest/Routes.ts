@@ -36,9 +36,9 @@ const guestRoutes = async (app: FastifyInstance) => {
 		Controllers.getEventGuestsPageController,
 	);
 
-	// Get User Invitations Page
+	// Get User Invitations Page by Signed In User
 	app.get(
-		"/guestspage/user/:UserID",
+		"/guestspage/user",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
 			schema: Contracts.GetUserInvitationsPageSchema,

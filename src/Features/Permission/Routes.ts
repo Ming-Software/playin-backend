@@ -36,9 +36,9 @@ const permissionRoutes = async (app: FastifyInstance) => {
 		Controllers.getEventPermissionsPageController,
 	);
 
-	// Get User Requests Page
+	// Get User Requests Page by Signed In User
 	app.get(
-		"/permissionspage/user/:UserID",
+		"/permissionspage/user",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
 			schema: Contracts.GetEventPermissionsPageSchema,
