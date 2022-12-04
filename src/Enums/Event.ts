@@ -1,6 +1,6 @@
-enum Event {
+enum EVENT {
 	PUBLIC = 1,
 	PRIVATE = 0,
 }
 
-export default Event;
+export default EVENT;

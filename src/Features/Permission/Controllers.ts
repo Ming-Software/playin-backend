@@ -8,9 +8,10 @@ export const newRequestontroller = async (
 	res: FastifyReply,
 ) => {
 	try {
-		// Verify if the event exists
+		// Verify if the event exists and it is public
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
+		if (!event.Public) throw new Error("Event is private");
 
 		// The user must not be already participating
 		const participant = await prisma.eventParticipant.findUnique({
@@ -72,7 +73,7 @@ export const removeGuestByOwnerController = async (
 	}
 };
 
-// Get Event Permissions Page
+// Get Event Permissions Page (only by the creator)
 export const getEventPermissionsPageController = async (
 	req: FastifyRequest<{
 		Params: typeof Contracts.GetEventPermissionsPageSchema.params.static;
@@ -110,7 +111,7 @@ export const getEventPermissionsPageController = async (
 	}
 };
 
-// Get User Permissions Page
+// Get User Permissions Page (by the signed in user)
 export const getUserInvitationsPageController = async (
 	req: FastifyRequest<{ Querystring: typeof Contracts.GetUserPermissionsPageSchema.querystring.static }>,
 	res: FastifyReply,

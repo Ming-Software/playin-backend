@@ -3,7 +3,7 @@ import { Type } from "@sinclair/typebox";
 // Create New Permission Schema
 export const NewRequestSchema = {
 	tags: ["Permission"],
-	description: "Creates a new request to participate in an event",
+	description: "Creates a new request to participate in an event. This can only be done if the event is public",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),

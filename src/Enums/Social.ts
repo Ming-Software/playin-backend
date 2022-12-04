@@ -1,7 +1,7 @@
-enum Social {
+enum SOCIAL {
 	NONE = "None",
 	COMPETITIVO = "Competitivo",
 	CASUAL = "Casual",
 }
 
-export default Social;
+export default SOCIAL;

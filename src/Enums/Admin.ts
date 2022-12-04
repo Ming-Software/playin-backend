@@ -1,6 +1,6 @@
-enum Admin {
+enum ADMIN {
 	USER = 0, // false
 	ADMIN = 1, // true
 }
 
-export default Admin;
+export default ADMIN;

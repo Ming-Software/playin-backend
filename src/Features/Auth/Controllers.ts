@@ -3,7 +3,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import prisma from "../../Utils/Prisma";
 import * as Hashing from "../../Utils/Hashing";
 import * as Contracts from "./Contracts";
-import Activities from "../../Enums/Activities";
+import ACTIVITIES from "../../Enums/Activities";
 
 // Register a New User
 export const registerController = async (
@@ -29,7 +29,7 @@ export const registerController = async (
 
 			// We create the UserActivity and if it is a NONE we delete every other activity and stop this for
 			await prisma.userActivity.create({ data: { UserID: newUser.ID, ActivityID: activity.ID } });
-			if (activity.Name === Activities.NONE) {
+			if (activity.Name === ACTIVITIES.NONE) {
 				await prisma.userActivity.deleteMany({ where: { NOT: { ActivityID: activity.ID } } });
 				break;
 			}
