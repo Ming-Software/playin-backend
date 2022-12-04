@@ -5,7 +5,6 @@
 	"description": "Fastify Prisma Typescript backend",
 	"license": "MIT",
 	"private": false,
-	"main": "main.ts",
 	"scripts": {
 		"dev": "tsnd --respawn --transpile-only --exit-child src/main.ts"
 	},

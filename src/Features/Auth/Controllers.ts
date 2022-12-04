@@ -28,9 +28,7 @@ export const registerController = async (
 			if (!activity) continue;
 
 			// We create the UserActivity and if it is a NONE we delete every other activity and stop this for
-			await prisma.userActivity.create({
-				data: { UserID: newUser.ID, UserName: newUser.Name, ActivityID: activity.ID, ActivityName: activity.Name },
-			});
+			await prisma.userActivity.create({ data: { UserID: newUser.ID, ActivityID: activity.ID } });
 			if (activity.Name === Activities.NONE) {
 				await prisma.userActivity.deleteMany({ where: { NOT: { ActivityID: activity.ID } } });
 				break;

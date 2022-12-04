@@ -82,6 +82,8 @@ model Activity {
 // Many to Many
 // Alguem que foi convidado
 model EventGuest {
+  CreatedAt DateTime @default(now())
+
   UserID  String
   User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
@@ -92,6 +94,8 @@ model EventGuest {
 
 // Alguem que vai participar
 model EventParticipant {
+  CreatedAt DateTime @default(now())
+
   UserID  String
   User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
@@ -102,6 +106,8 @@ model EventParticipant {
 
 // Alguem que pede para participar
 model EventPermission {
+  CreatedAt DateTime @default(now())
+
   UserID  String
   User    User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
   EventID String
@@ -111,13 +117,12 @@ model EventPermission {
 }
 
 model UserActivity {
-  UserID   String
-  UserName String
-  User     User   @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  CreatedAt DateTime @default(now())
 
-  ActivityID   String
-  ActivityName String
-  Activity     Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
+  UserID     String
+  User       User     @relation(fields: [UserID], references: [ID], onDelete: Cascade)
+  ActivityID String
+  Activity   Activity @relation(fields: [ActivityID], references: [ID], onDelete: Cascade)
 
   @@id([UserID, ActivityID])
 }

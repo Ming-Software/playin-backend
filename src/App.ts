@@ -12,7 +12,7 @@ import { verifyJWT } from "./Decorators/JWT";
 import authRoutes from "./Features/Auth/Routes";
 import userRoutes from "./Features/User/Routes";
 import eventRoutes from "./Features/Event/Routes";
-// import guestRoutes from "./Features/Guest/Routes";
+import guestRoutes from "./Features/Guest/Routes";
 // import permissionRoutes from "./Features/Permission/Routes";
 // import participantRoutes from "./Features/Participant/Routes";
 
@@ -45,6 +45,7 @@ const buildApp = async () => {
 	await app.register(authRoutes, { prefix: "/api/auth" });
 	await app.register(userRoutes, { prefix: "/api/user" });
 	await app.register(eventRoutes, { prefix: "/api/event" });
+	await app.register(guestRoutes, { prefix: "/api/guest" });
 	app.after(() => console.log("ROUTES --------> LOADED"));
 
 	// The server is ready to be accessed

@@ -1,116 +1,159 @@
-import prisma from "../../Utils/Prisma";
-import { Static } from "@sinclair/typebox";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { userIdEventIdParams } from "../Event/Contracts";
-import { eventIdParams } from "../User/Contracts";
-import { inviteUserRequest, inviteUsersRequest } from "./Contracts";
 
-// Invite Users
-export const inviteUsersController = async (
-  req: FastifyRequest<{ Params: Static<typeof eventIdParams>; Body: Static<typeof inviteUsersRequest> }>,
-  res: FastifyReply
-) => {
-  try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
-    let usersAddInvites: string[] = [];
-    await Promise.all(
-      req.body.map(async function (userId) {
-        const user = await prisma.user.findUnique({ where: { ID: userId.ID } });
-        if (user) {
-          await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: userId.ID } });
-          usersAddInvites.push(userId.ID);
-        }
-      })
-    );
-
-    return res.status(200).send(usersAddInvites);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
+import prisma from "../../Utils/Prisma";
+import * as Contracts from "./Contracts";
 
 // Invite Users
 export const inviteUserController = async (
-  req: FastifyRequest<{ Params: Static<typeof eventIdParams>; Body: Static<typeof inviteUserRequest> }>,
-  res: FastifyReply
+	req: FastifyRequest<{
+		Params: typeof Contracts.InviteUserSchema.params.static;
+		Body: typeof Contracts.InviteUserSchema.body.static;
+	}>,
+	res: FastifyReply,
 ) => {
-  try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
-    await prisma.user.findUniqueOrThrow({ where: { ID: req.body.ID } }); // Verifica se o user existe
-    await prisma.eventGuest.create({ data: { EventID: req.params.eventID, UserID: req.body.ID } }); // Cria o event guest
+	try {
+		// Verify if the event exists and we have permission
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
-    return res.status(200).send(req.body.ID);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// The user must exist
+		const user = await prisma.user.findUnique({ where: { ID: req.body.UserID } });
+		if (!user) throw new Error("User does not exist");
+
+		// The user must not be already participating
+		const participant = await prisma.eventParticipant.findUnique({
+			where: { UserID_EventID: { UserID: user.ID, EventID: req.params.EventID } },
+		});
+		if (participant) throw new Error("User is already participating");
+
+		// The user must not have already asked for permission
+		const permission = await prisma.eventPermission.findUnique({
+			where: { UserID_EventID: { UserID: user.ID, EventID: req.params.EventID } },
+		});
+		if (permission) throw new Error("User has already asked for permission to participate");
+
+		// The user must not have already been invited
+		const guest = await prisma.eventGuest.findUnique({
+			where: { UserID_EventID: { UserID: user.ID, EventID: req.params.EventID } },
+		});
+		if (guest) throw new Error("User has already been invited");
+
+		await prisma.eventGuest.create({ data: { EventID: req.params.EventID, UserID: user.ID } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
 // Remove an invite from an event
-export const removeInviteUsersController = async (
-  req: FastifyRequest<{ Params: Static<typeof userIdEventIdParams> }>,
-  res: FastifyReply
+export const removeGuestController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.RemoveGuestSchema.params.static;
+		Body: typeof Contracts.RemoveGuestSchema.body.static;
+	}>,
+	res: FastifyReply,
 ) => {
-  try {
-    await prisma.event.findUniqueOrThrow({ where: { ID: req.params.eventID } }); // Verifica se o evento existe
-    const user = await prisma.user.findUniqueOrThrow({ where: { ID: req.params.userID } }); // Verifica se o user existe
+	try {
+		// Verify if the event exists and we have permission
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
-    await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.eventID, UserID: req.params.userID } } });
+		// The user must exist
+		const user = await prisma.user.findUnique({ where: { ID: req.body.UserID } });
+		if (!user) throw new Error("User does not exist");
 
-    return res.status(200).send(user);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// The user must not have already been invited
+		const guest = await prisma.eventGuest.findUnique({
+			where: { UserID_EventID: { UserID: user.ID, EventID: req.params.EventID } },
+		});
+		if (!guest) throw new Error("User has not yet been invited");
+
+		await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.EventID, UserID: user.ID } } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };
 
-export const getUserInvitationsController = async (req: FastifyRequest, res: FastifyReply) => {
-  try {
-    // Definir o array userInvitations
-    let userInvitations: {
-      ID: string;
-      Name: string;
-      Description: string;
-      Start: Date;
-      Finish: Date;
-      Public: boolean;
-      MaxUsers: number;
-      CurrentUsers: number;
-      Locale: string;
-      Activity: string;
-      Social: string;
-    }[] = [];
+// Get Event Guests Page
+export const getEventGuestsPageController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetEventGuestsPage.params.static;
+		Querystring: typeof Contracts.GetEventGuestsPage.querystring.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists and we have permission
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
 
-    // Ir buscar todos os eventos do utilizador
-    const eventsGuest = await prisma.eventGuest.findMany({ where: { UserID: req.user.ID } });
-    await Promise.all(
-      eventsGuest.map(async function (eventGuest) {
-        const event = await prisma.event.findUnique({ where: { ID: eventGuest.EventID } });
-        if (event) {
-          // Ir buscar atividade associada ao evento
-          const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
-          if (activity) {
-            // preencher a variavel com os dados para a response
-            const userInvitation = {
-              ID: event.ID,
-              Name: event.Name,
-              Description: event.Description,
-              Start: event.Start,
-              Finish: event.Finish,
-              Public: event.Public,
-              MaxUsers: event.MaxUsers,
-              CurrentUsers: event.CurrentUsers,
-              Locale: event.Locale,
-              Activity: activity.Name,
-              Social: event.Social,
-            };
+		// We get the page of guests
+		const guestsPerPage = 30;
+		const guests = await prisma.eventGuest.findMany({
+			where: { EventID: req.params.EventID },
+			skip: (req.query.Page - 1) * guestsPerPage,
+			take: guestsPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
+		const total = await prisma.eventGuest.count({ where: { EventID: req.params.EventID } });
 
-            // Adicionar ao array
-            userInvitations.push(userInvitation);
-          }
-        }
-      })
-    );
-    return res.status(200).send(userInvitations);
-  } catch (error) {
-    return res.status(500).send(error);
-  }
+		// We now get the details of each guest
+		const guestsDetails = [];
+		for (const item of guests) {
+			const details = await prisma.user.findUnique({ where: { ID: item.UserID } });
+			if (!details) continue;
+			guestsDetails.push(details);
+		}
+
+		return res.status(200).send({ Guests: guestsDetails, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
+// Get User Invitations Page Schema
+export const getUserInvitationsPageController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetUserInvitationsPage.params.static;
+		Querystring: typeof Contracts.GetUserInvitationsPage.querystring.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists and we have permission
+		const user = await prisma.user.findUnique({ where: { ID: req.params.UserID } });
+		if (!user) throw new Error("User does not exist");
+		if (user.ID !== req.user.ID) throw new Error("You do not have permmission");
+
+		// We get the page of guests
+		const guestsPerPage = 30;
+		const invitations = await prisma.eventGuest.findMany({
+			where: { UserID: req.params.UserID },
+			skip: (req.query.Page - 1) * guestsPerPage,
+			take: guestsPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
+		const total = await prisma.eventGuest.count({ where: { UserID: req.params.UserID } });
+
+		// We now get the details of each guest
+		const invitationsDetails = [];
+		for (const item of invitations) {
+			const details = await prisma.event.findUnique({ where: { ID: item.EventID } });
+			if (!details) continue;
+
+			// We get the name of the acticivity and the creator
+			const activity = await prisma.activity.findUnique({ where: { ID: details.ActivityID } });
+			const creator = await prisma.user.findUnique({ where: { ID: details.UserID } });
+			invitationsDetails.push({ ...details, Activity: activity?.Name, Creator: creator?.Name });
+		}
+
+		return res.status(200).send({ Guests: invitationsDetails, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
 };

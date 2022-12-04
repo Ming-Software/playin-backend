@@ -27,7 +27,11 @@ export const getSignedInUserDetailsController = async (req: FastifyRequest, res:
 		// We get the activities the user likes to do
 		const userActivities = await prisma.userActivity.findMany({ where: { UserID: req.user.ID } });
 		const activities = [];
-		for (const item of userActivities) activities.push(item.ActivityName);
+		for (const item of userActivities) {
+			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });
+			if (!activity) continue;
+			activities.push(activity?.Name);
+		}
 
 		return res.status(200).send({ ...user, Activities: activities });
 	} catch (error) {
@@ -95,7 +99,7 @@ export const patchUserController = async (
 		await prisma.userActivity.deleteMany({ where: { UserID: req.user.ID } });
 		for (const item of activities) {
 			await prisma.userActivity.create({
-				data: { UserID: req.user.ID, UserName: req.user.Name, ActivityID: item.ID, ActivityName: item.Name },
+				data: { UserID: req.user.ID, ActivityID: item.ID },
 			});
 		}
 
@@ -136,7 +140,7 @@ export const getUsersPageDetailsController = async (
 		const usersPerPage = 30;
 
 		// We get the page from the db and the total amount of users existing
-		const user = await prisma.user.findMany({
+		const users = await prisma.user.findMany({
 			skip: (req.query.Page - 1) * usersPerPage,
 			take: usersPerPage,
 			orderBy: { CreatedAt: "desc" },
@@ -145,9 +149,15 @@ export const getUsersPageDetailsController = async (
 
 		// We now get the activities
 		const detailedUsers = [];
-		for (const item of user) {
+		for (const item of users) {
 			const activities = await prisma.userActivity.findMany({ where: { UserID: item.ID } });
-			detailedUsers.push({ ...item, Activities: activities.map((item) => item.ActivityName) });
+			const activitiesNames = [];
+			for (const itemA of activities) {
+				const activity = await prisma.activity.findUnique({ where: { ID: itemA.ActivityID } });
+				if (!activity) continue;
+				activitiesNames.push(activity.Name);
+			}
+			detailedUsers.push({ ...item, Activities: activitiesNames });
 		}
 
 		return res.status(200).send({ Users: detailedUsers, Total: total });

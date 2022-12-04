@@ -14,7 +14,7 @@ export const newEventController = async (
 		if (!activity) throw new Error(`Activity ${req.body.Activity} does not exist`);
 		if (req.body.Start >= req.body.Finish) throw new Error("Finish date is either equal or inferior to start date");
 
-		await prisma.event.create({
+		const event = await prisma.event.create({
 			data: {
 				Name: req.body.Name,
 				Description: req.body.Description,
@@ -29,6 +29,9 @@ export const newEventController = async (
 				UserID: req.user.ID,
 			},
 		});
+
+		// We add ourselves as a participant
+		await prisma.eventParticipant.create({ data: { EventID: event.ID, UserID: req.user.ID } });
 
 		return res.status(200).send({});
 	} catch (error) {
@@ -65,7 +68,7 @@ export const deleteEventController = async (
 		// We must verify that the event exists and that we have the permission to delete it (we are the creators)
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
-		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission to delete this event");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We delete the event
 		await prisma.event.delete({ where: { ID: req.params.EventID } });
@@ -88,7 +91,7 @@ export const updateEventController = async (
 		// We must verify that the event exists and that we have the permission to delete it (we are the creators)
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
-		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission to delete this event");
+		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		let activity = undefined;
 		let startDate = undefined;
@@ -189,7 +192,7 @@ export const getEventsPageController = async (
 			orderBy: { CreatedAt: "desc" },
 		});
 
-		// We get the name of the acticivity and of the user
+		// We get the name of the acticivity and of the creator
 		const eventsPage = [];
 		for (const item of events) {
 			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });

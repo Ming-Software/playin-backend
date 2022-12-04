@@ -1,34 +1,111 @@
 import { Type } from "@sinclair/typebox";
 
-// Invite Users
-export const inviteUsersRequest = Type.Array(Type.Object({ ID: Type.String({ format: "uuid" }) }));
-export const inviteUsersResponse = Type.Array(Type.Object({ ID: Type.String({ format: "uuid" }) }));
+// Invite Users to an Event Schema
+export const InviteUserSchema = {
+	tags: ["Guest"],
+	description: "Invites multiple users to participate in an event",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	body: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// Invite User
-export const inviteUserRequest = Type.Object({
-  ID: Type.String({ format: "uuid" }),
-});
-export const inviteUserResponse = Type.String({ format: "uuid" });
+// Remove a Guest from an Event Schema
+export const RemoveGuestSchema = {
+	tags: ["Guest"],
+	description: "Removes multiple guests from an event",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	body: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// Remove an invite from an event
-export const removeInviteUsersResponse = Type.Object({
-  ID: Type.String({ format: "uuid" }),
-  Name: Type.String(),
-});
+// Get Event Guests Page Schema
+export const GetEventGuestsPage = {
+	tags: ["Guest"],
+	description: "Returns a page of invited users to an event",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Guests: Type.Array(
+				Type.Object({
+					ID: Type.String({ format: "uuid" }),
+					Email: Type.String({ format: "email" }),
+					Name: Type.String(),
+					Description: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
 
-// User invitations
-export const getUserInvitationsResponse = Type.Array(
-  Type.Object({
-    ID: Type.String({ format: "uuid" }),
-    Name: Type.String(),
-    Description: Type.String(),
-    Start: Type.String({ format: "date-time" }),
-    Finish: Type.String({ format: "date-time" }),
-    Public: Type.Boolean(),
-    MaxUsers: Type.Number(),
-    CurrentUsers: Type.Number(),
-    Locale: Type.String(),
-    Activity: Type.String(),
-    Social: Type.String(),
-  })
-);
+// Get User Invitations Page Schema
+export const GetUserInvitationsPage = {
+	tags: ["Guest"],
+	description: "Returns a page of invitations a user has received",
+	params: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Guests: Type.Array(
+				Type.Object({
+					ID: Type.String({ format: "uuid" }),
+					Name: Type.String(),
+					Description: Type.String(),
+					Public: Type.Boolean(),
+					Start: Type.String({ format: "date-time" }),
+					Finish: Type.String({ format: "date-time" }),
+					Locale: Type.String(),
+					MaxUsers: Type.Number(),
+					CurrentUsers: Type.Number(),
+					Social: Type.String(),
+					Activity: Type.String(),
+					Creator: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
