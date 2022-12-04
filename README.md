@@ -4,7 +4,7 @@ Vamos descrever aqui os endpoints feitos no backend. Vamos falar dos valores que
 
 O domínio para os pedidos à backend é **playin-backend.fly.dev**
 
-A documentação do backend está disponivel em **playin-backend.fly.dev/documentation**
+A documentação do backend está disponivel em [playin-backend.fly.dev/documentation](playin-backend.fly.dev/documentation)
 
 ## Notas
 
