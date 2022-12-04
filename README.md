@@ -22,4 +22,4 @@ A autenticação funciona à base de JWT sendo que temos dois. Um é o AccessTok
 
 ## Pages
 
-Todos os gets de mais que um objecto retornam uma page, sendo esta composta por 15 entidades.
+Todos os gets de mais que um objecto retornam uma page, sendo esta composta por 15 objectos.
