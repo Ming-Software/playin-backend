@@ -3,7 +3,7 @@ import { Type } from "@sinclair/typebox";
 // Invite Users to an Event Schema
 export const InviteUserSchema = {
 	tags: ["Guest"],
-	description: "Invites multiple users to participate in an event",
+	description: "Invites a user to participate in an event. Can only be done if logged in as the event creator",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),

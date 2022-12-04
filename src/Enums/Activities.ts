@@ -1,4 +1,4 @@
-enum Activities {
+enum ACTIVITIES {
 	NONE = "None",
 	FUTEBOL = "Futebol",
 	FUTSAL = "Futsal",
@@ -7,4 +7,4 @@ enum Activities {
 	TENIS = "Tenis",
 }
 
-export default Activities;
+export default ACTIVITIES;

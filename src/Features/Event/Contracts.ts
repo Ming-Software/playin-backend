@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
 
-import EventStatus from "../../Enums/Event";
+import EVENT from "../../Enums/Event";
 
 // New Event Schema
 export const NewEventSchema = {
@@ -9,7 +9,7 @@ export const NewEventSchema = {
 	body: Type.Object({
 		Name: Type.String(),
 		Description: Type.String(),
-		Public: Type.Boolean({ default: EventStatus.PUBLIC }),
+		Public: Type.Boolean({ default: EVENT.PUBLIC }),
 		Start: Type.String({ format: "date-time" }),
 		Finish: Type.String({ format: "date-time" }),
 		Locale: Type.String(),
@@ -86,7 +86,7 @@ export const UpdateEventSchema = {
 	body: Type.Object({
 		Name: Type.Optional(Type.String()),
 		Description: Type.Optional(Type.String()),
-		Public: Type.Optional(Type.Boolean({ default: EventStatus.PUBLIC })),
+		Public: Type.Optional(Type.Boolean({ default: EVENT.PUBLIC })),
 		Start: Type.Optional(Type.String({ format: "date-time" })),
 		Finish: Type.Optional(Type.String({ format: "date-time" })),
 		Locale: Type.Optional(Type.String()),

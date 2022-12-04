@@ -83,7 +83,7 @@ export const removeGuestByOwnerController = async (
 
 // Remove an invite from an event (only the guest can delete)
 
-// Get Event Guests Page
+// Get Event Guests Page (only the creator may use this)
 export const getEventGuestsPageController = async (
 	req: FastifyRequest<{
 		Params: typeof Contracts.GetEventGuestsPageSchema.params.static;
@@ -121,7 +121,7 @@ export const getEventGuestsPageController = async (
 	}
 };
 
-// Get User Invitations Page
+// Get User Invitations Page of the Signed In User
 export const getUserInvitationsPageController = async (
 	req: FastifyRequest<{ Querystring: typeof Contracts.GetUserInvitationsPageSchema.querystring.static }>,
 	res: FastifyReply,

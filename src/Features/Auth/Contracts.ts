@@ -1,8 +1,8 @@
 import { Type } from "@sinclair/typebox";
 
 import Activities from "../../Enums/Activities";
-import Admin from "../../Enums/Admin";
-import Social from "../../Enums/Social";
+import ADMIN from "../../Enums/Admin";
+import SOCIAL from "../../Enums/Social";
 
 // Register Schema
 export const RegisterSchema = {
@@ -12,8 +12,8 @@ export const RegisterSchema = {
 		Email: Type.String({ format: "email" }),
 		Password: Type.String(),
 		Name: Type.String(),
-		Admin: Type.Boolean({ default: Admin.USER }),
-		Social: Type.String({ default: Social.NONE }),
+		Admin: Type.Boolean({ default: ADMIN.USER }),
+		Social: Type.String({ default: SOCIAL.NONE }),
 		Activities: Type.Array(Type.String(), { default: [Activities.NONE] }),
 	}),
 	response: {
