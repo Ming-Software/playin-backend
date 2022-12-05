@@ -127,6 +127,7 @@ export const GetEventsPageSchema = {
 		200: Type.Object({
 			Events: Type.Array(
 				Type.Object({
+					ID: Type.String({ format: "uuid" }),
 					Name: Type.String(),
 					Description: Type.String(),
 					Public: Type.Boolean(),
@@ -164,6 +165,7 @@ export const GetEventsByUserPageSchema = {
 		200: Type.Object({
 			Events: Type.Array(
 				Type.Object({
+					ID: Type.String({ format: "uuid" }),
 					Name: Type.String(),
 					Description: Type.String(),
 					Public: Type.Boolean(),
