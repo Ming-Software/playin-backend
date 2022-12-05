@@ -6,6 +6,7 @@ export const GetSignedInUserSchema = {
 	description: "Returns the Email, Name and Description of the signed in user",
 	response: {
 		200: Type.Object({
+			ID: Type.String({ format: "uuid" }),
 			Email: Type.String({ format: "email" }),
 			Name: Type.String(),
 			Description: Type.String(),
@@ -24,6 +25,7 @@ export const GetSignedInUserDetailsSchema = {
 	description: "Returns a more complete profile of the signed in user",
 	response: {
 		200: Type.Object({
+			ID: Type.String({ format: "uuid" }),
 			Email: Type.String({ format: "email" }),
 			Name: Type.String(),
 			Description: Type.String(),
@@ -119,6 +121,7 @@ export const GetUsersDetailsPageSchema = {
 		200: Type.Object({
 			Users: Type.Array(
 				Type.Object({
+					ID: Type.String({ format: "uuid" }),
 					Email: Type.String({ format: "email" }),
 					Name: Type.String(),
 					Description: Type.String(),
