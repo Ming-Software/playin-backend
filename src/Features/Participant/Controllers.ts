@@ -35,6 +35,6 @@ export const removeParticipantByOwnerController = async (
 
 		return res.status(200).send({});
 	} catch (error) {
-		return res.status(500).send(error);
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
 };
