@@ -17,7 +17,7 @@ model User {
 
   ID          String @id @default(uuid())
   Email       String @unique
-  Name        String
+  Name        String @unique
   Password    String
   Description String @default("")
   Social      String @default("None") // None || Competitivo || Casual

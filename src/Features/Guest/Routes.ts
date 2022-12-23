@@ -16,7 +16,7 @@ const guestRoutes = async (app: FastifyInstance) => {
 
 	// Remove an Invite from an Event (Called by the owner)
 	app.delete(
-		"/owner/:EventID",
+		"/cancel/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
 			schema: Contracts.RemoveGuestByOwnerSchema,
