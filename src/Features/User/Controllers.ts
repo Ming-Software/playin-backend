@@ -3,6 +3,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
 import * as Contracts from "./Contracts";
 import Activities from "../../Enums/Activities";
+import { count } from "console";
 
 // Get Signed In User
 export const getSignedInUserController = async (req: FastifyRequest, res: FastifyReply) => {
@@ -126,6 +127,23 @@ export const getUsersPageController = async (
 		const total = await prisma.user.count();
 
 		return res.status(200).send({ Users: user, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
+// Get a filtered Users with minimal description
+export const getUsersFilterController = async (
+	req: FastifyRequest<{ Querystring: typeof Contracts.GetUsersFilterSchema.querystring.static }>,
+	res: FastifyReply,
+) => {
+	try {
+		// filter of the total amount of users existing
+		const users = await prisma.user.findMany({
+			where: { Name: { contains: req.query.Name } },
+		});
+
+		return res.status(200).send({ Users: users });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}

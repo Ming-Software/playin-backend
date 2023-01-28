@@ -110,6 +110,31 @@ export const GetUsersPageSchema = {
 	},
 };
 
+// Get a Page of Users
+export const GetUsersFilterSchema = {
+	tags: ["User"],
+	description: "Returns a page of 30 users, each with ID, Email, Name and Description",
+	querystring: Type.Object({
+		Name: Type.String(),
+	}),
+	response: {
+		200: Type.Object({
+			Users: Type.Array(
+				Type.Object({
+					ID: Type.String({ format: "uuid" }),
+					Email: Type.String({ format: "email" }),
+					Name: Type.String(),
+				}),
+			),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
 // Get a Page of Users Details
 export const GetUsersDetailsPageSchema = {
 	tags: ["User"],

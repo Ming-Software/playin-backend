@@ -14,6 +14,16 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.getSignedInUserController,
 	);
 
+	// Get All Filtered Users with minimal information
+	app.get(
+		"/filter",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUsersFilterSchema,
+		},
+		Controllers.getUsersFilterController,
+	);
+
 	// Get Signed In User Details
 	app.get(
 		"/details",
