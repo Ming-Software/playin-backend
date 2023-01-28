@@ -40,7 +40,7 @@ export const removeParticipantByOwnerController = async (
 };
 
 // Add a Participant to an Event
-export const addParticipant = async (
+export const addParticipantController = async (
 	req: FastifyRequest<{
 		Params: typeof Contracts.DeleteParticipantByOwnerSchema.params.static;
 		Body: typeof Contracts.DeleteParticipantByOwnerSchema.body.static;
@@ -84,6 +84,40 @@ export const addParticipant = async (
 		await prisma.event.update({ where: { ID: event.ID }, data: { CurrentUsers: event.CurrentUsers + 1 } });
 
 		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
+// Get Event Guests Page (only the creator may use this)
+export const getEventParticipantsPageController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetEventParticipantsPageSchema.params.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists and we have permission
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+		//if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
+
+		// We get the page of guests
+		const participants = await prisma.eventParticipant.findMany({
+			where: { EventID: req.params.EventID },
+			orderBy: { CreatedAt: "desc" },
+		});
+		const total = await prisma.eventParticipant.count({ where: { EventID: req.params.EventID } });
+
+		// We now get the details of each guest
+		const guestsDetails = [];
+		for (const item of participants) {
+			const details = await prisma.user.findUnique({ where: { ID: item.UserID } });
+			if (!details) continue;
+			guestsDetails.push(details);
+		}
+
+		return res.status(200).send({ Guests: guestsDetails, Total: total });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
