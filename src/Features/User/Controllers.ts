@@ -131,6 +131,23 @@ export const getUsersPageController = async (
 	}
 };
 
+// Get a filtered Users with minimal description
+export const getUsersFilterController = async (
+	req: FastifyRequest<{ Querystring: typeof Contracts.GetUsersFilterSchema.querystring.static }>,
+	res: FastifyReply,
+) => {
+	try {
+		// filter of the total amount of users existing
+		const users = await prisma.user.findMany({
+			where: { Name: { startsWith: req.query.Name } },
+		});
+
+		return res.status(200).send({ Users: users });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
 // Get a Page of Users (30 Users per page) with a more detailed description
 export const getUsersPageDetailsController = async (
 	req: FastifyRequest<{ Querystring: typeof Contracts.GetUsersPageSchema.querystring.static }>,
