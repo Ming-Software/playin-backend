@@ -57,7 +57,7 @@ export const getEventController = async (
 		const user = await prisma.user.findUnique({ where: { ID: event.UserID } });
 		if (!user) throw new Error("User does not exist");
 
-		return res.status(200).send({ ...event, Activity: activity.Name, User: user.Name });
+		return res.status(200).send({ ...event, Activity: activity.Name, Creator: user.Name });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}

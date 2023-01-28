@@ -49,7 +49,7 @@ export const GetEventSchema = {
 			CurrentUsers: Type.Number(),
 			Social: Type.String(),
 			Activity: Type.String(),
-			User: Type.String(),
+			Creator: Type.String(),
 			Status: Type.String({ default: "OK" }),
 		}),
 		500: Type.Object({
