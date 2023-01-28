@@ -110,14 +110,14 @@ export const getEventParticipantsPageController = async (
 		const total = await prisma.eventParticipant.count({ where: { EventID: req.params.EventID } });
 
 		// We now get the details of each guest
-		const guestsDetails = [];
+		const participantsDetails = [];
 		for (const item of participants) {
 			const details = await prisma.user.findUnique({ where: { ID: item.UserID } });
 			if (!details) continue;
-			guestsDetails.push(details);
+			participantsDetails.push(details);
 		}
 
-		return res.status(200).send({ Guests: guestsDetails, Total: total });
+		return res.status(200).send({ Partipants: participantsDetails, Total: total });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}

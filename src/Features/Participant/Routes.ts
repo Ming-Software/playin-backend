@@ -26,7 +26,7 @@ const participantRoutes = async (app: FastifyInstance) => {
 
 	// Get Event Participants Page
 	app.get(
-		"/guestspage/event/:EventID",
+		"/participantspage/event/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
 			schema: Contracts.GetEventParticipantsPageSchema,
