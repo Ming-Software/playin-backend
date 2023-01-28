@@ -24,6 +24,16 @@ const guestRoutes = async (app: FastifyInstance) => {
 		Controllers.removeGuestByOwnerController,
 	);
 
+	// Decline an Invite from an Event (Called by the guest)
+	app.delete(
+		"/decline/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.DeclineGuestInvite,
+		},
+		Controllers.declineGuestInvite,
+	);
+
 	// Get Event Guests Page
 	app.get(
 		"/guestspage/event/:EventID",

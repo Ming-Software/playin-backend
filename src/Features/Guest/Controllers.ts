@@ -81,6 +81,34 @@ export const removeGuestByOwnerController = async (
 	}
 };
 
+export const declineGuestInvite = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.RemoveGuestByOwnerSchema.params.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+
+		// The user must have already been invited
+		const guest = await prisma.eventGuest.findUnique({
+			where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.EventID } },
+		});
+		if (!guest) throw new Error("You are not invited");
+
+		// We check for permission. Only the guest can delete this invite
+		if (guest.UserID !== req.user.ID) throw new Error("You do not have permmission");
+
+		await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.user.ID } } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
 // Get Event Guests Page (only the creator may use this)
 export const getEventGuestsPageController = async (
 	req: FastifyRequest<{
