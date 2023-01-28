@@ -13,6 +13,16 @@ const participantRoutes = async (app: FastifyInstance) => {
 		},
 		Controllers.removeParticipantByOwnerController,
 	);
+
+	// Remove a Participant from an Event, By Owner
+	app.post(
+		"/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.AddParticipant,
+		},
+		Controllers.addParticipant,
+	);
 };
 
 export default participantRoutes;

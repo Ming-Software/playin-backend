@@ -38,3 +38,53 @@ export const removeParticipantByOwnerController = async (
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
 };
+
+// Add a Participant to an Event
+export const addParticipant = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.DeleteParticipantByOwnerSchema.params.static;
+		Body: typeof Contracts.DeleteParticipantByOwnerSchema.body.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists and check for permission
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+
+		const guest = await prisma.eventGuest.findUnique({
+			where: { UserID_EventID: { UserID: req.body.UserID, EventID: req.params.EventID } },
+		});
+
+		const permission = await prisma.eventPermission.findUnique({
+			where: { UserID_EventID: { UserID: req.body.UserID, EventID: req.params.EventID } },
+		});
+
+		if (guest) {
+			if (guest.UserID !== req.user.ID) throw new Error("You do not have permmission");
+			await prisma.eventGuest.delete({
+				where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.body.UserID } },
+			});
+		}
+		if (permission) {
+			if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
+			await prisma.eventPermission.delete({
+				where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.body.UserID } },
+			});
+		}
+		if (!guest && !permission) throw new Error("Dont have an invite or request");
+
+		// The user must exist
+		const user = await prisma.user.findUnique({ where: { ID: req.body.UserID } });
+		if (!user) throw new Error("User does not exist");
+
+		// We create the participant and update the current user on the event
+		await prisma.eventParticipant.create({ data: { EventID: req.params.EventID, UserID: req.body.UserID } });
+
+		await prisma.event.update({ where: { ID: event.ID }, data: { CurrentUsers: event.CurrentUsers + 1 } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
