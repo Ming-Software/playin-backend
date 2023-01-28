@@ -45,7 +45,7 @@ export const RemoveGuestByOwnerSchema = {
 // Remove a Guest from an Event By Owner Schema
 export const DeclineGuestInvite = {
 	tags: ["Guest"],
-	description: "Declines an invite from an event. Only the creator may use this endpoint",
+	description: "Declines an invite from an event. Only the guest may use this endpoint",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),

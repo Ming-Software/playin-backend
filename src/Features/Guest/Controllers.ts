@@ -96,9 +96,9 @@ export const declineGuestInvite = async (
 		const guest = await prisma.eventGuest.findUnique({
 			where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.EventID } },
 		});
-		if (!guest) throw new Error("User has not yet been invited");
+		if (!guest) throw new Error("You are not invited");
 
-		// We check for permission. Only the owner can delete this invite
+		// We check for permission. Only the guest can delete this invite
 		if (guest.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		await prisma.eventGuest.delete({ where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.user.ID } } });
