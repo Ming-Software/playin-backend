@@ -51,7 +51,7 @@ export const GetEventParticipantsPageSchema = {
 	}),
 	response: {
 		200: Type.Object({
-			Guests: Type.Array(
+			Participants: Type.Array(
 				Type.Object({
 					ID: Type.String({ format: "uuid" }),
 					Email: Type.String({ format: "email" }),
