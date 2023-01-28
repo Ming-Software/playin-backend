@@ -113,7 +113,7 @@ export const GetUsersPageSchema = {
 // Get a Page of Users
 export const GetUsersFilterSchema = {
 	tags: ["User"],
-	description: "Returns a page of 30 users, each with ID, Email, Name and Description",
+	description: "Returns all Users filtered by Name, each with ID, Email, Name",
 	querystring: Type.Object({
 		Name: Type.String(),
 	}),

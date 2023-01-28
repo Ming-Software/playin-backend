@@ -3,7 +3,6 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import prisma from "../../Utils/Prisma";
 import * as Contracts from "./Contracts";
 import Activities from "../../Enums/Activities";
-import { count } from "console";
 
 // Get Signed In User
 export const getSignedInUserController = async (req: FastifyRequest, res: FastifyReply) => {
@@ -140,7 +139,7 @@ export const getUsersFilterController = async (
 	try {
 		// filter of the total amount of users existing
 		const users = await prisma.user.findMany({
-			where: { Name: { contains: req.query.Name } },
+			where: { Name: { startsWith: req.query.Name } },
 		});
 
 		return res.status(200).send({ Users: users });
