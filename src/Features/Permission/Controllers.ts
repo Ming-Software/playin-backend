@@ -106,7 +106,6 @@ export const removeGuestByOwnerController = async (
 export const getEventPermissionsPageController = async (
 	req: FastifyRequest<{
 		Params: typeof Contracts.GetEventPermissionsPageSchema.params.static;
-		Querystring: typeof Contracts.GetEventPermissionsPageSchema.querystring.static;
 	}>,
 	res: FastifyReply,
 ) => {
@@ -117,11 +116,8 @@ export const getEventPermissionsPageController = async (
 		//if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We get the page of guests
-		const permissionsPerPage = 15;
 		const permissions = await prisma.eventPermission.findMany({
 			where: { EventID: req.params.EventID },
-			skip: (req.query.Page - 1) * permissionsPerPage,
-			take: permissionsPerPage,
 			orderBy: { CreatedAt: "desc" },
 		});
 		const total = await prisma.eventPermission.count({ where: { EventID: req.params.EventID } });

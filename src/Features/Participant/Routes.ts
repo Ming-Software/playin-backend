@@ -14,14 +14,24 @@ const participantRoutes = async (app: FastifyInstance) => {
 		Controllers.removeParticipantByOwnerController,
 	);
 
-	// Remove a Participant from an Event, By Owner
+	// Add a Participant to an Event, By Owner or Guest
 	app.post(
 		"/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,
 			schema: Contracts.AddParticipant,
 		},
-		Controllers.addParticipant,
+		Controllers.addParticipantController,
+	);
+
+	// Get Event Participants Page
+	app.get(
+		"/guestspage/event/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventParticipantsPageSchema,
+		},
+		Controllers.getEventParticipantsPageController,
 	);
 };
 

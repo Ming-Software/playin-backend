@@ -113,7 +113,6 @@ export const declineGuestInvite = async (
 export const getEventGuestsPageController = async (
 	req: FastifyRequest<{
 		Params: typeof Contracts.GetEventGuestsPageSchema.params.static;
-		Querystring: typeof Contracts.GetEventGuestsPageSchema.querystring.static;
 	}>,
 	res: FastifyReply,
 ) => {
@@ -124,11 +123,8 @@ export const getEventGuestsPageController = async (
 		//if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We get the page of guests
-		const guestsPerPage = 15;
 		const guests = await prisma.eventGuest.findMany({
 			where: { EventID: req.params.EventID },
-			skip: (req.query.Page - 1) * guestsPerPage,
-			take: guestsPerPage,
 			orderBy: { CreatedAt: "desc" },
 		});
 		const total = await prisma.eventGuest.count({ where: { EventID: req.params.EventID } });

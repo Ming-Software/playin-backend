@@ -64,9 +64,6 @@ export const GetEventPermissionsPageSchema = {
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),
-	querystring: Type.Object({
-		Page: Type.Number(),
-	}),
 	response: {
 		200: Type.Object({
 			Permissions: Type.Array(
