@@ -16,6 +16,16 @@ const permissionRoutes = async (app: FastifyInstance) => {
 
 	// Delete Permission By Owner
 	app.delete(
+		"/cancel/:EventID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.CancelPermission,
+		},
+		Controllers.cancelPermissionRequest,
+	);
+
+	// Delete Permission By Owner
+	app.delete(
 		"/decline/:EventID",
 		{
 			preHandler: app.auth([app.verifyJWT]) as any,

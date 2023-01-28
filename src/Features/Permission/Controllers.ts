@@ -39,6 +39,35 @@ export const newRequestontroller = async (
 	}
 };
 
+// Cancel a request to an event (only the user that requeted can delete)
+export const cancelPermissionRequest = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.DeletePermissionByOwnerSchema.params.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// Verify if the event exists
+		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
+		if (!event) throw new Error("Event does not exist");
+
+		// The user must have already asked for permission
+		const guest = await prisma.eventPermission.findUnique({
+			where: { UserID_EventID: { UserID: req.user.ID, EventID: req.params.EventID } },
+		});
+		if (!guest) throw new Error("User has not yet requested to participate");
+
+		// We check for permission. Only the owner can delete this invite
+		if (guest.UserID !== req.user.ID) throw new Error("You do not have permmission");
+
+		await prisma.eventPermission.delete({ where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.user.ID } } });
+
+		return res.status(200).send({});
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
 // Remove an invite from an event (only the owner can delete)
 export const removeGuestByOwnerController = async (
 	req: FastifyRequest<{
@@ -85,7 +114,7 @@ export const getEventPermissionsPageController = async (
 		// Verify if the event exists and we have permission
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
-		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
+		//if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We get the page of guests
 		const permissionsPerPage = 15;
