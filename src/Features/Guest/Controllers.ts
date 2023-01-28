@@ -121,7 +121,7 @@ export const getEventGuestsPageController = async (
 		// Verify if the event exists and we have permission
 		const event = await prisma.event.findUnique({ where: { ID: req.params.EventID } });
 		if (!event) throw new Error("Event does not exist");
-		if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
+		//if (event.UserID !== req.user.ID) throw new Error("You do not have permmission");
 
 		// We get the page of guests
 		const guestsPerPage = 15;

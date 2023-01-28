@@ -19,6 +19,24 @@ export const NewRequestSchema = {
 };
 
 // Delete Permission Schema
+export const CancelPermission = {
+	tags: ["Permission"],
+	description: "Cancel a request to an event. Only the requester may use this endpoint",
+	params: Type.Object({
+		EventID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
+// Delete Permission Schema
 export const DeletePermissionByOwnerSchema = {
 	tags: ["Permission"],
 	description: "Deletes a request to an event. Only the event creator may use this endpoint",
