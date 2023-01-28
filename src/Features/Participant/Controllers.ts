@@ -117,7 +117,7 @@ export const getEventParticipantsPageController = async (
 			participantsDetails.push(details);
 		}
 
-		return res.status(200).send({ Partipants: participantsDetails, Total: total });
+		return res.status(200).send({ Participants: participantsDetails, Total: total });
 	} catch (error) {
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
