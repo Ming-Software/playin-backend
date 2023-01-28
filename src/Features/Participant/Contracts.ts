@@ -24,7 +24,7 @@ export const DeleteParticipantByOwnerSchema = {
 // Add Participant to an Event
 export const AddParticipant = {
 	tags: ["Participant"],
-	description: "Adds a participant to an event. Only the event creator may use this endpoint",
+	description: "Adds a participant to an event. Only the event creator and guest may use this endpoint",
 	params: Type.Object({
 		EventID: Type.String({ format: "uuid" }),
 	}),
