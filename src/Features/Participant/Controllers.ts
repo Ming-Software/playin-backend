@@ -27,6 +27,8 @@ export const removeParticipantByOwnerController = async (
 		});
 		if (!participant) throw new Error("User is not a participant");
 
+		if (user.ID == event.UserID) throw new Error("You cant remove the creator");
+
 		// We delete the participant and update the current user on the event
 		await prisma.eventParticipant.delete({
 			where: { UserID_EventID: { EventID: req.params.EventID, UserID: req.body.UserID } },
