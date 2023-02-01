@@ -63,6 +63,16 @@ const eventRoutes = async (app: FastifyInstance) => {
 		},
 		Controllers.getEventsByUserPageController,
 	);
+
+	// Get One Page of Events that one user participates
+	app.get(
+		"/participantpage/:UserID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetEventsParticipateUserPageSchema,
+		},
+		Controllers.getEventsParticipateUserPageController,
+	);
 };
 
 export default eventRoutes;
