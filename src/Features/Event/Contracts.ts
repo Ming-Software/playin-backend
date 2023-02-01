@@ -189,3 +189,41 @@ export const GetEventsByUserPageSchema = {
 		}),
 	},
 };
+
+// Get One Page of Events Created by One User Schema
+export const GetEventsParticipateUserPageSchema = {
+	tags: ["Event"],
+	description: "Returns a page of events that a user participates",
+	params: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	querystring: Type.Object({
+		Page: Type.Number(),
+	}),
+	response: {
+		200: Type.Object({
+			Events: Type.Array(
+				Type.Object({
+					ID: Type.String({ format: "uuid" }),
+					Name: Type.String(),
+					Description: Type.String(),
+					Public: Type.Boolean(),
+					Start: Type.String({ format: "date-time" }),
+					Finish: Type.String({ format: "date-time" }),
+					Locale: Type.String(),
+					MaxUsers: Type.Number(),
+					CurrentUsers: Type.Number(),
+					Social: Type.String(),
+					Activity: Type.String(),
+					Creator: Type.String(),
+				}),
+			),
+			Total: Type.Number(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};

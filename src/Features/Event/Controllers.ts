@@ -212,3 +212,36 @@ export const getEventsPageController = async (
 		return res.status(500).send({ ErrorMessage: (error as Error).message });
 	}
 };
+
+export const getEventsParticipateUserPageController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetEventsParticipateUserPageSchema.params.static;
+		Querystring: typeof Contracts.GetEventsParticipateUserPageSchema.querystring.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// We get the page of events
+		const eventsPerPage = 15;
+		const eventsParticipants = await prisma.eventParticipant.findMany({
+			where: { UserID: req.params.UserID },
+			skip: (req.query.Page - 1) * eventsPerPage,
+			take: eventsPerPage,
+			orderBy: { CreatedAt: "desc" },
+		});
+
+		const eventsPage = [];
+		for (const item of eventsParticipants) {
+			const event = await prisma.event.findUniqueOrThrow({ where: { ID: item.EventID } });
+			const creator = await prisma.user.findUnique({ where: { ID: event.UserID } });
+			const activity = await prisma.activity.findUnique({ where: { ID: event.ActivityID } });
+			eventsPage.push({ ...event, Activity: activity?.Name, Creator: creator?.Name });
+		}
+
+		// We get the total events of this user
+		const total = eventsPage.length;
+		return res.status(200).send({ Events: eventsPage, Total: total });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
