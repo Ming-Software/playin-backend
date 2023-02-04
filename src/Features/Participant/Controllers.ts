@@ -62,6 +62,8 @@ export const addParticipantController = async (
 			where: { UserID_EventID: { UserID: req.body.UserID, EventID: req.params.EventID } },
 		});
 
+		if (event.CurrentUsers + 1 > event.MaxUsers) throw new Error("Max Users exceeded");
+
 		if (guest) {
 			if (guest.UserID !== req.user.ID) throw new Error("You do not have permmission");
 			await prisma.eventGuest.delete({
