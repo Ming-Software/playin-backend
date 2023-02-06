@@ -41,6 +41,30 @@ export const GetSignedInUserDetailsSchema = {
 	},
 };
 
+export const GetUserDetailsSchema = {
+	tags: ["User"],
+	description: "Returns a detailed profile of one user",
+	params: Type.Object({
+		UserID: Type.String({ format: "uuid" }),
+	}),
+	response: {
+		200: Type.Object({
+			ID: Type.String({ format: "uuid" }),
+			Email: Type.String({ format: "email" }),
+			Name: Type.String(),
+			Description: Type.String(),
+			Social: Type.String(),
+			Activities: Type.Array(Type.String()),
+			Admin: Type.Boolean(),
+			Status: Type.String({ default: "OK" }),
+		}),
+		500: Type.Object({
+			Status: Type.String({ default: "ERROR" }),
+			ErrorMessage: Type.String(),
+		}),
+	},
+};
+
 // Delete Signed In User Schema
 export const DeleteSignedInUserSchema = {
 	tags: ["User"],

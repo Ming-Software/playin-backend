@@ -39,6 +39,33 @@ export const getSignedInUserDetailsController = async (req: FastifyRequest, res:
 	}
 };
 
+// Get  User Details
+export const getUserDetailsController = async (
+	req: FastifyRequest<{
+		Params: typeof Contracts.GetUserDetailsSchema.params.static;
+	}>,
+	res: FastifyReply,
+) => {
+	try {
+		// We look for the user and if it does not exist there is an error
+		const user = await prisma.user.findUnique({ where: { ID: req.params.UserID } });
+		if (!user) throw new Error("User does not exists");
+
+		// We get the activities the user likes to do
+		const userActivities = await prisma.userActivity.findMany({ where: { UserID: req.params.UserID } });
+		const activities = [];
+		for (const item of userActivities) {
+			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });
+			if (!activity) continue;
+			activities.push(activity?.Name);
+		}
+
+		return res.status(200).send({ ...user, Activities: activities });
+	} catch (error) {
+		return res.status(500).send({ ErrorMessage: (error as Error).message });
+	}
+};
+
 // Delete Signed In User
 export const deleteSignedInUserController = async (req: FastifyRequest, res: FastifyReply) => {
 	try {
