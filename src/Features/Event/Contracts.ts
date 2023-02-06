@@ -140,6 +140,7 @@ export const GetEventsPageSchema = {
 					Social: Type.String(),
 					Activity: Type.String(),
 					Creator: Type.String(),
+					CreatorID: Type.String({ format: "uuid" }),
 				}),
 			),
 			Total: Type.Number(),
