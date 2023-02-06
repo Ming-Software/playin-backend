@@ -34,6 +34,16 @@ const userRoutes = async (app: FastifyInstance) => {
 		Controllers.getSignedInUserDetailsController,
 	);
 
+	// Get User Details
+	app.get(
+		"/userprofile/:UserID",
+		{
+			preHandler: app.auth([app.verifyJWT]) as any,
+			schema: Contracts.GetUserDetailsSchema,
+		},
+		Controllers.getUserDetailsController,
+	);
+
 	// Delete Signed In User
 	app.delete(
 		"/",
