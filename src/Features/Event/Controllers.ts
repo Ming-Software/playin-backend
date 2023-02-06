@@ -201,7 +201,7 @@ export const getEventsPageController = async (
 		for (const item of events) {
 			const activity = await prisma.activity.findUnique({ where: { ID: item.ActivityID } });
 			const creator = await prisma.user.findUnique({ where: { ID: item.UserID } });
-			eventsPage.push({ ...item, Activity: activity?.Name, Creator: creator?.Name });
+			eventsPage.push({ ...item, Activity: activity?.Name, Creator: creator?.Name, CreatorID: item.UserID });
 		}
 
 		// We get the total events of this user
